@@ -1,0 +1,111 @@
+{
+  "folders": {
+    "items": {
+      "src": {},
+      "test": {},
+      "host": {}
+    }
+  },
+  "packages": {
+    "EInvoice.Domain.Shared": {
+      "path": "src/EInvoice.Domain.Shared/EInvoice.Domain.Shared.abppkg.json",
+      "folder": "src"
+    },
+    "EInvoice.Domain": {
+      "path": "src/EInvoice.Domain/EInvoice.Domain.abppkg.json",
+      "folder": "src"
+    },
+    "EInvoice.Application.Contracts": {
+      "path": "src/EInvoice.Application.Contracts/EInvoice.Application.Contracts.abppkg.json",
+      "folder": "src"
+    },
+    "EInvoice.Application": {
+      "path": "src/EInvoice.Application/EInvoice.Application.abppkg.json",
+      "folder": "src"
+    },
+    "EInvoice.EntityFrameworkCore": {
+      "path": "src/EInvoice.EntityFrameworkCore/EInvoice.EntityFrameworkCore.abppkg.json",
+      "folder": "src"
+    },
+    "EInvoice.MongoDB": {
+      "path": "src/EInvoice.MongoDB/EInvoice.MongoDB.abppkg.json",
+      "folder": "src"
+    },
+    "EInvoice.HttpApi": {
+      "path": "src/EInvoice.HttpApi/EInvoice.HttpApi.abppkg.json",
+      "folder": "src"
+    },
+    "EInvoice.HttpApi.Client": {
+      "path": "src/EInvoice.HttpApi.Client/EInvoice.HttpApi.Client.abppkg.json",
+      "folder": "src"
+    },
+    "EInvoice.TestBase": {
+      "path": "test/EInvoice.TestBase/EInvoice.TestBase.abppkg.json",
+      "folder": "test"
+    },
+    "EInvoice.EntityFrameworkCore.Tests": {
+      "path": "test/EInvoice.EntityFrameworkCore.Tests/EInvoice.EntityFrameworkCore.Tests.abppkg.json",
+      "folder": "test"
+    },
+    "EInvoice.MongoDB.Tests": {
+      "path": "test/EInvoice.MongoDB.Tests/EInvoice.MongoDB.Tests.abppkg.json",
+      "folder": "test"
+    },
+    "EInvoice.Domain.Tests": {
+      "path": "test/EInvoice.Domain.Tests/EInvoice.Domain.Tests.abppkg.json",
+      "folder": "test"
+    },
+    "EInvoice.Application.Tests": {
+      "path": "test/EInvoice.Application.Tests/EInvoice.Application.Tests.abppkg.json",
+      "folder": "test"
+    },
+    "EInvoice.HttpApi.Host": {
+      "path": "host/EInvoice.HttpApi.Host/EInvoice.HttpApi.Host.abppkg.json",
+      "folder": "host"
+    },
+    "EInvoice.Web": {
+      "path": "src/EInvoice.Web/EInvoice.Web.abppkg.json",
+      "folder": "src"
+    },
+    "EInvoice.HttpApi.Client.ConsoleTestApp": {
+      "path": "test/EInvoice.HttpApi.Client.ConsoleTestApp/EInvoice.HttpApi.Client.ConsoleTestApp.abppkg.json",
+      "folder": "test"
+    },
+    "EInvoice.Web.Host": {
+      "path": "host/EInvoice.Web.Host/EInvoice.Web.Host.abppkg.json",
+      "folder": "host"
+    },
+    "EInvoice.AuthServer": {
+      "path": "host/EInvoice.AuthServer/EInvoice.AuthServer.abppkg.json",
+      "folder": "host"
+    },
+    "EInvoice.Host.Shared": {
+      "path": "host/EInvoice.Host.Shared/EInvoice.Host.Shared.abppkg.json",
+      "folder": "host"
+    },
+    "EInvoice.Web.Unified": {
+      "path": "host/EInvoice.Web.Unified/EInvoice.Web.Unified.abppkg.json",
+      "folder": "host"
+    },
+    "EInvoice.Blazor": {
+      "path": "src/EInvoice.Blazor/EInvoice.Blazor.abppkg.json",
+      "folder": "src"
+    },
+    "EInvoice.Blazor.Host": {
+      "path": "host/EInvoice.Blazor.Host/EInvoice.Blazor.Host.abppkg.json",
+      "folder": "host"
+    },
+    "EInvoice.Blazor.Server": {
+      "path": "src/EInvoice.Blazor.Server/EInvoice.Blazor.Server.abppkg.json",
+      "folder": "src"
+    },
+    "EInvoice.Blazor.WebAssembly": {
+      "path": "src/EInvoice.Blazor.WebAssembly/EInvoice.Blazor.WebAssembly.abppkg.json",
+      "folder": "src"
+    },
+    "EInvoice.Blazor.Server.Host": {
+      "path": "host/EInvoice.Blazor.Server.Host/EInvoice.Blazor.Server.Host.abppkg.json",
+      "folder": "host"
+    }
+  }
+}

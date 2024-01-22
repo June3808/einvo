@@ -1,0 +1,8 @@
+{
+  "culture": "en-GB",
+  "texts": {
+    "MyAccount": "My account",
+    "SamplePageMessage": "A sample page for the TaskScheduler module",
+    "Menu:TaskScheduler": "Task Scheduler"
+  }
+}

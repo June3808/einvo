@@ -1,0 +1,13 @@
+{
+  "culture": "en",
+  "texts": {
+    "MyAccount": "My account",
+    "SamplePageMessage": "A sample page for the TaskScheduler module",
+    "Menu:TaskScheduler": "Task Scheduler",
+    "Permission:Create": "Create",
+    "Permission:Update": "Update",
+    "Permission:Delete": "Delete",
+    "TaskScheduler": "Task Scheduler",
+    "TaskSchedulerDeletionConfirmationMessage": "Are you sure you want to delete this job?"
+  }
+}

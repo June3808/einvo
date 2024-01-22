@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+    <Import Project="..\..\common.props" />
+
+    <PropertyGroup>
+        <TargetFramework>net7.0</TargetFramework>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Volo.Abp.AspNetCore.Components.WebAssembly.Theming" Version="7.4.2" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\TaskScheduler.Blazor\TaskScheduler.Blazor.csproj" />
+        <ProjectReference Include="..\TaskScheduler.HttpApi.Client\TaskScheduler.HttpApi.Client.csproj" />
+    </ItemGroup>
+
+</Project>

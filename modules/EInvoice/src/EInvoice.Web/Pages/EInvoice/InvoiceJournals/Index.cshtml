@@ -1,0 +1,77 @@
+@page
+@using EInvoice.Permissions
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Mvc.Localization
+@using Volo.Abp.AspNetCore.Mvc.UI.Layout
+@using Volo.Abp.Users
+@using EInvoice.Web.Pages.EInvoice.EInvoice.InvoiceJournals
+@using EInvoice.Localization
+@using EInvoice.Web.Menus
+@model IndexModel
+@inject IPageLayout PageLayout
+@inject IHtmlLocalizer<EInvoiceResource> L
+@inject IAuthorizationService Authorization
+@inject ICurrentUser CurrentUser
+@{
+    // PageLayout.Content.Title = L["InvoiceJournals"].Value;
+    PageLayout.Content.BreadCrumb.Add(L["Menu:InvoiceJournals"].Value);
+    PageLayout.Content.MenuItemName = EInvoiceMenus.InvoiceJournals;
+}
+
+@section scripts
+{
+    <abp-script src="/Pages/EInvoice/InvoiceJournals/index.js" />
+    <abp-script src="/libs/popper.js/umd/popper.min.js"/>
+    <abp-script src="/libs/bootstrap-fileinput/js/fileinput.min.js"/>
+    <abp-script src="/libs/bootstrap-fileinput/js/plugins/purify.min.js"/>
+    <abp-script src="/libs/bootstrap-fileinput/js/plugins/sortable.min.js"/>
+    <abp-script src="/libs/bootstrap-fileinput/themes/fa/theme.min.js"/>
+}
+@section styles
+{
+    <abp-style src="/Pages/EInvoice/InvoiceJournals/index.css"/>
+    <abp-style src="/libs/bootstrap-fileinput/css/fileinput.min.css"/>
+}
+
+<script>
+    var fileContainerName = '@Model.ViewModel.FileContainerName';
+    var ownerUserId = '@CurrentUser.Id';
+    var parentId = '@Model.ParentId';
+</script>
+
+<abp-card>
+    <abp-card-header>
+        <abp-row>
+            <abp-column size-md="_6">
+                <abp-card-title>@L["InvoiceJournals"]</abp-card-title>
+            </abp-column>
+            <abp-column size-md="_6" class="text-end">
+			    @if (await Authorization.IsGrantedAsync(EInvoicePermissions.InvoiceJournals.Create))
+                {
+                @* <abp-button id="NewInvoiceJournalsButton"
+                            text="@L["CreateInvoiceJournals"].Value"
+                            icon="plus"
+                            button-type="Primary" /> *@
+
+                <abp-button id="UploadFileButton"
+                                text="@L["UploadFile"].Value"
+                                icon="plus"
+                                button-type="Primary" />
+                
+                }
+            </abp-column>
+        </abp-row>
+    </abp-card-header>
+    <abp-card-body>
+        <abp-row class="mb-3">
+            <a abp-collapse-id="InvoiceJournalsCollapse" class="text-secondary">@L["TableFilter"] </a>
+        </abp-row>
+        <abp-dynamic-form abp-model="InvoiceJournalsFilter" id="InvoiceJournalsFilter" required-symbols="false" column-size="_3">
+            <abp-collapse-body id="InvoiceJournalsCollapse">
+                <abp-form-content />
+            </abp-collapse-body>
+        </abp-dynamic-form>
+        <hr />
+        <abp-table striped-rows="true" id="InvoiceJournalsTable" class="nowrap"/>
+    </abp-card-body>
+</abp-card>

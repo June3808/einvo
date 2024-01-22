@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="..\..\common.props" />
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2;netstandard2.1;net7.0</TargetFrameworks>
+    <RootNamespace />
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Volo.Abp.BlobStoring" Version="7.4.2" />
+    <ProjectReference Include="..\EasyAbp.FileManagement.Domain.Core\EasyAbp.FileManagement.Domain.Core.csproj" />
+  </ItemGroup>
+
+</Project>

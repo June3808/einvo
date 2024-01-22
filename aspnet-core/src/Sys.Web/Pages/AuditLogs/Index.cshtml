@@ -1,0 +1,106 @@
+﻿@page
+@using Microsoft.AspNetCore.Mvc.Localization;
+@using Volo.Abp.AspNetCore.Mvc.UI.Layout;
+@using Sys.Localization;
+@using Sys.Web.Menus;
+@model Sys.Web.Pages.AuditLogs.IndexModel
+@inject IPageLayout PageLayout
+@inject IHtmlLocalizer<SysResource> L
+@{
+    PageLayout.Content.Title = L["AuditLog"].Value;
+    PageLayout.Content.BreadCrumb.Add(L["Menu:AuditLogs"].Value);
+    PageLayout.Content.MenuItemName = SysMenus.AuditLogs;
+}
+@section scripts
+{
+    @* <abp-script src="/Pages/LoggingManagement/SystemLogs/index.js" /> *@
+    <abp-script src="/view-resources/views/auditlogs/index.js"/>
+}
+@section styles
+{
+    @* <abp-style src="/Pages/LoggingManagement/SystemLogs/index.css" /> *@
+}
+
+<script>
+    var queryString = "@Model.QueryModel.QueryString";
+    var userName = "@Model.QueryModel.UserName";
+    var startTime = "@Model.QueryModel.StartTime.ToString("yyyy-MM-dd HH:mm:ss")";
+    var endTime = "@Model.QueryModel.EndTime.ToString("yyyy-MM-dd HH:mm:ss")";
+    var hasException = "@Model.QueryModel.hasException";
+    var applicationName = "@Model.QueryModel.ApplicationName";
+    // var serviceName = "@Model.QueryModel.ServiceName";
+
+    // //detail
+    // var Browser = "@Model.QueryModel.Browser";
+
+
+    var currentDetailModalData = {
+        logName: null,
+        logValue: null,
+        time: null
+    };
+</script>
+
+<abp-card>
+    <abp-card-header>
+        <abp-row>
+            <abp-column size-md="_6">
+                <abp-card-title>@L["AuditLog"]</abp-card-title>
+            </abp-column>
+        </abp-row>
+    </abp-card-header>
+    <abp-card-body>
+        <abp-card-body>
+            <form data-ajaxForm="true" asp-page="Index">
+                <div class="row">
+                    <div class="col-md-12">
+                        <abp-input asp-for="QueryModel.QueryString" />
+                    </div>
+                    <div class="col-md-4">
+                        <abp-input class="col-md-4" asp-for="QueryModel.StartTime" />
+                    </div>
+                    <div class="col-md-4">
+                        <abp-input class="col-md-4" asp-for="QueryModel.EndTime" />
+                    </div>
+                    <div class="col-md-4">
+                        <abp-input class="col-md-4" asp-for="QueryModel.UserName" />
+                    </div>
+                  @*   <div class="col-md-4">
+                        <abp-input class="col-md-4" asp-for="QueryModel.ServiceName" />
+                    </div> *@
+                    <div class="col-md-4">
+                        <abp-input class="col-md-4" asp-for="QueryModel.ApplicationName" />
+                    </div>
+
+                    <div class="col-md-4">
+                        <label for="QueryModel_HasException">@L["HasException"].Value</label>
+                        <select id ="QueryModel_HasException" name="QueryModel_HasException" class="form-control">
+                            <option value="">@L["All"]</option>
+                            <option value="false">@L["Success"]</option>
+                            <option value="true">@L["HasError"]</option>
+                        </select>
+                    </div>
+                </div>
+
+                <abp-row>
+                    <abp-column size-md="_6">
+                    </abp-column>
+                    <abp-column size-md="_6" class="text-end">
+                        <abp-button id="search-button" button-type="Primary" text="@L["Search"].Value" />
+                    </abp-column>
+                </abp-row>
+            </form>
+        </abp-card-body>
+        <abp-table striped-rows="true" id="SystemLogTable" class="nowrap">
+            <thead>
+                <tr>
+                    <th>@L["Actions"]</th>
+                    <th>@L["ExecutionTime"]</th>
+                    <th>@L["HttpMethod"]</th>
+                    <th>@L["UserName"]</th>
+                    <th>@L["ApplicationName"]</th>
+                </tr>
+            </thead>
+        </abp-table>
+    </abp-card-body>
+</abp-card>

@@ -1,0 +1,496 @@
+﻿@page "{id:Guid?}"
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Mvc.Localization;
+@using TaskScheduler.Permissions
+@using Volo.Abp.AspNetCore.Mvc.UI.Layout;
+@using TaskScheduler.Localization;
+@using TaskScheduler.Web.Menus;
+@using Volo.Abp.Users
+@model TaskSchedulers.Web.Pages.TaskScheduler.ViewModel.CreateModel
+@inject IPageLayout PageLayout
+@inject IHtmlLocalizer<TaskSchedulerResource> L
+@inject IAuthorizationService Authorization
+@inject ICurrentUser CurrentUser
+@{
+    PageLayout.Content.Title = L["TaskScheduler"].Value;
+    PageLayout.Content.BreadCrumb.Add(L["Menu:TaskScheduler"].Value);
+    PageLayout.Content.MenuItemName = TaskSchedulerMenus.TaskScheduler;
+}
+@section scripts
+{
+    <script>
+        const $misfireInstructionsMap =  @(Html.Raw(Newtonsoft.Json.JsonConvert.DeserializeObject(Model.ScheduleJob.ScheduleJob.MisfireInstructionsJson))) ;
+    </script>
+    <script src="/Pages/libs/jquery-cron/jquery-cron.js"></script>
+    <script src="/Pages/libs/Scheduler/global.js"></script>
+    <abp-script src="/Pages/TaskScheduler/Create.js"></abp-script>
+}
+@section styles
+{
+    <link href="/Pages/libs/jquery-cron/jquery-cron.css" rel="stylesheet" />
+    <style>
+
+        .cron-selector select{
+            background-color: #f5f5f7;
+            border-radius: 0.5rem;
+            transition: background-color 0.2s, border-color 0.4s;
+            border-color: #e7e9ec;
+            color: #161616;
+            padding: 0.675rem 1.25rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            line-height: 1.5;
+        }
+
+        .cron-block span span {
+            padding: 5px 5px 0px 5px;
+            /*        width: 31.25% !important;*/
+        }
+
+        .cron-block {
+            width: 12.25% !important;
+        }
+
+        .cron-block p {
+            display: flex;
+            -webkit-box-orient: horizontal;
+            -webkit-box-direction: normal;
+            flex-direction: row;
+            margin: 0px -0.5em 1em;
+        }
+
+        .ui.checkbox, .inline .field {
+            display: inline-block;
+        }
+    </style>
+}
+
+<abp-card>
+    <form class="ui form" style="width:100%" id="form" method="post" enctype="multipart/form-data">
+        <abp-card-header>
+        <abp-row>
+            <abp-column size-md="_6">
+                <abp-card-title>@L["TaskScheduler"]</abp-card-title>
+            </abp-column>
+        </abp-row>
+    </abp-card-header>
+    <abp-card-body>
+        <div class="inline float-end">
+            <a class="btn btn-dark grey" id="btn-discard" href="@Url.Action("Index","TaskScheduler")">Discard Changes</a>
+
+            @if (await Authorization.IsGrantedAsync(TaskSchedulerPermissions.TaskScheduler.Delete) && Model.ScheduleJob.IsEditMode)
+            {
+                <abp-button id="DeleteJobButton"
+                            text="@L["Delete"].Value"
+                            button-type="Danger" />
+
+            }
+
+            <div style="display:inline-block">
+                <div class="btn-group submit-buttons" role="group">
+                    <button class="btn btn-primary btn-submit" type="submit" name="mustStartNow" value="false">Save</button>
+
+                    <div class="btn-group" role="group">
+                        <button id="btnGroupDrop1"
+                                type="button"
+                                class="btn btn-primary dropdown-toggle"
+                                data-bs-toggle="dropdown"
+                                aria-expanded="false">
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+                            <li><button id="btn-trigger" class="dropdown-item btn-submit" href="#" name="mustStartNow" value="true">Save and Trigger</button></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+            <div class="ui segment">
+                <input type="hidden" name="trigger[isNew]" value="!@Model.ScheduleJob.IsEditMode" />
+                @* <input type="hidden" name="TriggerNow" id="TriggerNow" value="false" /> *@
+                @if (Model.ScheduleJob.IsEditMode)
+                {
+                    <input type="hidden" id="ScheduleJobId" name="ScheduleJob[Id]" value="@Model.ScheduleJob.ScheduleJob.Id" />
+                }
+                <div id="trigger-properties">
+
+                    <div class="field">
+                        @* <label>Trigger Type</label> *@
+                        <label name="ScheduleJob[TriggerType]" asp-for="@Model.ScheduleJob.ScheduleJob.TriggerType"></label>
+                        <div class="inline fields" id="trigger-type-radios">
+                            @*                         <div class="field">
+                            <div class="ui radio checkbox">
+                            <input type="radio" name="ScheduleJob[triggerType]" value="simple" @(Model.ScheduleJob.ScheduleJob.TriggerType == TriggerType.Simple ? "checked" : "")>
+                            <label>Simple</label>
+                            </div>
+                            </div>
+                            <div class="field">
+                            <div class="ui radio checkbox">
+                            <input type="radio" name="ScheduleJob[triggerType]" value="cron" @(Model.ScheduleJob.ScheduleJob.TriggerType == TriggerType.Cron ? "checked" : "")>
+                            <label>Cron</label>
+                            </div>
+                            </div>
+                            <div class="field">
+                            <div class="ui radio checkbox">
+                            <input type="radio" name="ScheduleJob[triggerType]" value="daily" @(Model.ScheduleJob.ScheduleJob.TriggerType == TriggerType.Daily ? "checked" : "")>
+                            <label>Daily Time Interval</label>
+                            </div>
+                            </div> *@
+
+                            <abp-radio asp-for="@Model.ScheduleJob.Trigger" asp-items="@Model.TriggersList" inline="true" />
+                        </div>
+                    </div>
+
+                    <div class="fields">
+                        <div class="twelve wide field accept-error">
+                            @* <input type="text" name="ScheduleJob[JobName]" autocomplete="off" value="@Model.ScheduleJob.ScheduleJob.JobName" required> *@
+                            <abp-input name="ScheduleJob[JobName]" asp-for="@Model.ScheduleJob.ScheduleJob.JobName"></abp-input>
+                        </div>
+                    </div>
+
+                    <div class="fields">
+                        <div class="twelve wide field accept-error">
+                            <label class="form-label">Job Group</label>
+                            <select class="ui fluid dropdown form-select" name="ScheduleJob[JobGroup]" required>
+                                <option value="" class="form-select">Select</option>
+                                @foreach (var d in Model.ScheduleJob.ScheduleJob.JobGroupNames)
+                                {
+                                    if (Model.ScheduleJob.ScheduleJob.JobGroup == d.Value)
+                                    {
+                                        <option value="@d.Value" selected>@d.DisplayText</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@d.Value">@d.DisplayText</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                    </div>
+
+                    @*     <div class="fields">
+                    <div class="twelve wide field accept-error">
+                    <label>Category</label>
+                    <select class="ui fluid dropdown" name="ScheduleJob[JobCategory]">
+                    <option value="">Select</option>
+                    @foreach (var category in Model.ScheduleJob.ScheduleJob.Categories)
+                    {
+                    <option value="@category.Value" selected="@category.IsSelected">@category.DisplayText</option>
+                    }
+                    </select>
+                    </div>
+                    </div> *@
+
+                    <div class="fields">
+                        <div class="twelve wide field accept-error">
+                            @*    <label>Batch Sequence Sorting</label>
+                            <input type="number" autocomplete="off" name="ScheduleJob[UIBatchSeq]" value="@Model.ScheduleJob.ScheduleJob.UIBatchSeq" /> *@
+                            <abp-input name="ScheduleJob[UIBatchSeq]" asp-for="@Model.ScheduleJob.ScheduleJob.UIBatchSeq"></abp-input>
+                        </div>
+                    </div>
+
+                    <abp-row>
+                        <abp-column size-md="_6">
+                            <abp-input name="ScheduleJob[StartDateTime]" asp-for="@Model.ScheduleJob.ScheduleJob.StartDateTime"></abp-input>
+                        </abp-column>
+                        <abp-column size-md="_6">
+                            <abp-input name="ScheduleJob[EndDateTime]" asp-for="@Model.ScheduleJob.ScheduleJob.EndDateTime"></abp-input>
+                        </abp-column>
+                    </abp-row>
+                    @*  <div class="fields">
+                    <div class="five wide field accept-error">
+                    <label>Start Date</label>
+                    <div class="ui calendar date-time">
+                    <div class="ui fluid input left icon">
+                    <i class="calendar alternate outline icon"></i>
+                    <abp-input asp-for="@Model.ScheduleJob.ScheduleJob.StartDateTime"></abp-input>
+                    <input class="comparedates" id="StartDateTime" type="text" name="ScheduleJob[StartDateTime]" autocomplete="off" value="@Model.ScheduleJob.ScheduleJob.StartDateTime" placeholder="Date/Time">
+                    </div>
+                    </div>
+                    </div>     <div class="five wide field accept-error">
+                    <label>End Date</label>
+                    <div class="ui calendar date-time">
+                    <div class="ui fluid input left icon">
+                    <i class="calendar alternate outline icon"></i>
+                    <abp-input asp-for="@Model.ScheduleJob.ScheduleJob.EndDateTime"></abp-input>
+                    <input class="comparedates" id="EndDateTime" data-rule-greaterDateThan="true" type="text" name="ScheduleJob[EndDateTime]" autocomplete="off" value="@Model.ScheduleJob.ScheduleJob.EndDateTime" placeholder="Date/Time">
+                    </div>
+                    </div>
+                    </div>
+                    </div> *@
+
+                    <div class="fields">
+                        <abp-column size-md="_9">
+                            <label>Misfire Instruction</label>
+                            <input type="hidden" name="ScheduleJob[misfireInstruction]" id="selectedMisfireInstruction">
+                            <select class="ui fluid dropdown form-select" id="misfireInstructions"></select>
+                        </abp-column>
+                        <abp-column size-md="_3">
+                            <label class="form-label">Priority</label>
+                            <select class="ui search selection dropdown allow-additions form-select" name="ScheduleJob[priority]" id="triggerPriority">
+                                @foreach (var d in Model.ScheduleJob.ScheduleJob.PriorityList)
+                                {
+                                    if (Model.ScheduleJob.ScheduleJob.PriorityOrDefault.ToString() == d)
+                                    {
+                                        <option value="@d" selected>@d</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@d">@d</option>
+                                    }
+                                }
+                            </select>
+                        </abp-column>
+                        @*    <div class="eight wide field accept-error">
+                        <abp-input asp-for="@Model.ScheduleJob.ScheduleJob.MisfireInstruction"></abp-input>
+                        <label>Misfire Instruction</label>
+                        <input type="hidden" name="ScheduleJob.ScheduleJob[misfireInstruction]" id="selectedMisfireInstruction">
+                        <select class="ui fluid dropdown form-select" id="misfireInstructions"></select>
+                        </div> *@
+                        @*   <div class="two wide field accept-error">
+                        <label class="form-label">Priority</label>
+                        <select class="ui search selection dropdown allow-additions form-select" name="ScheduleJob[priority]" id="triggerPriority">
+                        @foreach (var d in Model.ScheduleJob.ScheduleJob.PriorityList)
+                        {
+                        if (Model.ScheduleJob.ScheduleJob.PriorityOrDefault.ToString() == d)
+                        {
+                        <option value="@d" selected>@d</option>
+                        }
+                        else
+                        {
+                        <option value="@d">@d</option>
+                        }
+                        }
+                        </select>
+
+                        </div> *@
+                    </div>
+
+                    <h5 class="ui dividing header card-title" id="specificTriggerHeader"></h5>
+
+                    <div class="cron trigger-type">
+                        <div class="fields">
+                            <div class="twelve wide field accept-error cron-field">
+                                <label>@*<a href="http://cronmaker.com" target="_blank"><i class="external alternate icon"></i>http://cronmaker.com</a>*@</label>
+                                <div class="ui cron-selector" id='selector'></div>
+                            </div>
+                        </div>
+                        <div class="fields">
+                            <div class="seven wide field accept-error cron-field">
+                                @* <abp-input asp-for="@Model.ScheduleJob.Trigger.Cron.CronExpression"></abp-input> *@
+                                <label class="form-label" for="ScheduleJob_Trigger_Cron_CronExpression">CronExpression</label>
+                                <input type="text" data-val="true" id="ScheduleJob_Trigger_Cron_CronExpression" name="trigger[cron.cronExpression]" value="" class="form-control input-validation-error" aria-describedby="ScheduleJob_Trigger_Cron_CronExpression-error" aria-invalid="true">
+                                @*                                 <label>Cron Expression </label>
+                                <input type="text" name="trigger[cron.cronExpression]" placeholder="Cron Expression" id="cron-expression" value="@Model.ScheduleJob.Trigger.Cron.CronExpression" /> *@
+                            </div>
+                            <div class="seven wide field accept-error cron-field">
+                                <label>&nbsp;</label>
+                                <button id="cronGenerator" type="button" class="ui button primary btn btn-primary">Generate Cron</button>
+                            </div>
+                        </div>
+                        <div class="fields">
+                            <div class="seven wide field accept-error cron-field">
+                                @* <abp-input asp-for="@Model.ScheduleJob.Trigger.Cron.CronRemark" ></abp-input> *@
+                                <label class="form-label" for="ScheduleJob_Trigger_Cron_CronRemark">CronRemark</label>
+                                <input type="text" data-val="true" id="ScheduleJob_Trigger_Cron_CronRemark" name="trigger[cron.cronRemark]" value="" class="form-control input-validation-error" aria-describedby="ScheduleJob_Trigger_Cron_CronRemark-error" aria-invalid="true">
+                                @*       <label>Cron Remark</label>
+                                <input id="cron-desc" name="trigger[cron.cronRemark]" placeholder="Cron Remark" value="@Model.ScheduleJob.Trigger.Cron.CronRemark" /> *@
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="simple trigger-type">
+                        <abp-row>
+                            <abp-column size-md="_3">
+                                <abp-input name="trigger[simple.IntervalMinutes]" asp-for="@Model.ScheduleJob.Trigger.Simple.IntervalMinutes"></abp-input>
+                            </abp-column>
+                            <abp-column size-md="_3">
+                                <abp-input name="trigger[simple.IntervalSeconds]" asp-for="@Model.ScheduleJob.Trigger.Simple.IntervalSeconds"></abp-input>
+                            </abp-column>
+                        </abp-row>
+                        @*
+                        <div class="fields">
+                        <div class="four wide field accept-error">
+                        <abp-input asp-for="@Model.ScheduleJob.Trigger.Simple.IntervalMinutes"></abp-input>
+                        <label>Interval Minutes</label>
+                        <input id="simple_IntervalMinutes" type="number" name="trigger[simple.IntervalMinutes]" placeholder="Repeat Interval" value="@Model.ScheduleJob.Trigger.Simple.IntervalMinutes" />
+                        </div>
+                        <div class="three wide field accept-error">
+                        <abp-input asp-for="@Model.ScheduleJob.Trigger.Simple.IntervalSeconds"></abp-input>
+                        <label>Interval Seconds</label>
+                        <input id="simple_IntervalSeconds" data-rule-notEqualSimple="true" type="number" name="trigger[simple.IntervalSeconds]" placeholder="Repeat Seconds" value="@Model.ScheduleJob.Trigger.Simple.IntervalSeconds" />
+                        </div>
+                        </div>
+                        *@
+
+                        <abp-row>
+                            <abp-column size-md="_3">
+                                <abp-input name="trigger[simple.RunTimes]" asp-for="@Model.ScheduleJob.Trigger.Simple.RunTimes"></abp-input>
+                            </abp-column>
+                            <abp-column size-md="_3">
+                                <abp-input name="trigger[simple.repeatForever]" asp-for="@Model.ScheduleJob.Trigger.Simple.RepeatForever"></abp-input>
+                            </abp-column>
+                        </abp-row>
+                        @*   <div class="fields">
+                        <div class="four wide field accept-error">
+                        <abp-input asp-for="@Model.ScheduleJob.Trigger.Simple.RunTimes"></abp-input>
+                        <label>Repeat Count</label>
+                        <input type="text" name="trigger[simple.RunTimes]" placeholder="Run Times" id="triggerSimpleRunTimes" value="@Model.ScheduleJob.Trigger.Simple.RunTimes" @(Model.ScheduleJob.Trigger.Simple.RepeatForever ? "disabled" : "") />
+                        </div>
+                        </div> *@
+
+                        @*  <div class="field">
+                        <div class="ui checkbox">
+                        <abp-input asp-for="@Model.ScheduleJob.Trigger.Simple.RepeatForever"></abp-input>
+                        <input name="trigger[simple.repeatForever]" type="checkbox" value="True" data-toggle-input="triggerSimpleRunTimes" @(Model.ScheduleJob.Trigger.Simple.RepeatForever ? "checked" : "") />
+                        <label>Repeat Forever</label>
+                        </div>
+                        </div> *@
+
+                    </div>
+
+                    <div class="daily trigger-type">
+
+                        <abp-row>
+                            <abp-column size-md="_6">
+                                <abp-input name="trigger[daily.IntervalMinutes]" asp-for="@Model.ScheduleJob.Trigger.Daily.IntervalMinutes"></abp-input>
+                            </abp-column>
+                            <abp-column size-md="_6">
+                                <abp-input name="trigger[daily.IntervalSeconds]" asp-for="@Model.ScheduleJob.Trigger.Daily.IntervalSeconds"></abp-input>
+                            </abp-column>
+                        </abp-row>
+                        @*           <div class="fields">
+                        <div class="four wide field accept-error">
+                        <abp-input asp-for="@Model.ScheduleJob.Trigger.Daily.IntervalMinutes"></abp-input>
+                        <label>Interval Minutes</label>
+                        <input id="daily_IntervalMinutes" type="number" name="trigger[daily.IntervalMinutes]" placeholder="Repeat Minutes" value="@Model.ScheduleJob.Trigger.Daily.IntervalMinutes" />
+                        </div>
+                        <div class="three wide field accept-error">
+                        <abp-input asp-for="@Model.ScheduleJob.Trigger.Daily.IntervalSeconds"></abp-input>
+                        <label>Interval Seconds</label>
+                        <input type="number" data-rule-notEqualDaily="true" name="trigger[daily.IntervalSeconds]" placeholder="Repeat Seconds" value="@Model.ScheduleJob.Trigger.Daily.IntervalSeconds" />
+                        </div>
+                        </div> *@
+
+                        <abp-row>
+                            <abp-column size-md="_6">
+                                <abp-input name="trigger[daily.RunTimes]" asp-for="@Model.ScheduleJob.Trigger.Daily.RunTimes"></abp-input>
+                            </abp-column>
+                            <abp-column size-md="_6">
+                                <abp-input name="trigger[daily.repeatForever]" asp-for="@Model.ScheduleJob.Trigger.Daily.RepeatForever"></abp-input>
+                            </abp-column>
+                        </abp-row>
+                        @*
+                        <div class="fields">
+                        <div class="four wide field accept-error">
+                        <abp-input asp-for="@Model.ScheduleJob.Trigger.Daily.RunTimes"></abp-input>
+                        <label>Repeat Count</label>
+                        <input type="text" name="trigger[daily.RunTimes]" placeholder="Repeat Count" id="triggerDailyRunTimes" value="@Model.ScheduleJob.Trigger.Daily.RunTimes" @(Model.ScheduleJob.Trigger.Daily.RepeatForever ? "disabled" : "") />
+                        </div>
+                        </div>
+
+                        <div class="field">
+                        <div class="ui checkbox">
+                        <abp-input asp-for="@Model.ScheduleJob.Trigger.Daily.RepeatForever"></abp-input>
+                        <input name="trigger[daily.repeatForever]" type="checkbox" value="True" data-toggle-input="triggerDailyRunTimes" @(Model.ScheduleJob.Trigger.Daily.RepeatForever ? "checked" : "")>
+                        <label>Repeat Forever</label>
+                        </div>
+                        </div> *@
+
+                        <abp-row>
+                            <abp-column size-md="_6">
+                                <abp-input name="trigger[daily.startTime]" asp-for="@Model.ScheduleJob.Trigger.Daily.StartTime"></abp-input>
+                            </abp-column>
+                            <abp-column size-md="_6">
+                                <abp-input name="trigger[daily.endTime]" asp-for="@Model.ScheduleJob.Trigger.Daily.EndTime"></abp-input>
+                            </abp-column>
+                        </abp-row>
+
+                        @*            <div class="fields">
+                        <div class="four wide field accept-error">
+                        <label>Start Time of Day</label>
+                        <div class="ui calendar time-only">
+                        <div class="ui fluid input left icon">
+                        <i class="clock alternate outline icon"></i>
+                        <abp-input asp-for="@Model.ScheduleJob.Trigger.Daily.StartTime"></abp-input>
+                        <input type="text" autocomplete="off" name="trigger[daily.startTime]" placeholder="Time" value="@(Model.ScheduleJob.Trigger.Daily.StartTime.HasValue ? Model.ScheduleJob.Trigger.Daily.StartTime.Value.ToString() : "")">
+                        </div>
+                        </div>
+                        </div>
+                        <div class="four wide field accept-error">
+                        <label>End Time of Day</label>
+                        <div class="ui calendar time-only">
+                        <div class="ui fluid input left icon">
+                        <i class="clock alternate outline icon"></i>
+                        <abp-input asp-for="@Model.ScheduleJob.Trigger.Daily.EndTime"></abp-input>
+                        <input type="text" autocomplete="off" name="trigger[daily.endTime]" placeholder="Time" value="@Model.ScheduleJob.Trigger.Daily.EndTime">
+                        </div>
+                        </div>
+                        </div>
+                        </div> *@
+
+                        <div class="field">
+                            <label>Days of Week</label>
+                            <div class="inline fields">
+                                <div class="field">
+                                    <div class="ui checkbox">
+                                        <abp-input name="trigger[daily.daysOfWeek.monday]" class="form-check form-check-inline" asp-for="@Model.ScheduleJob.Trigger.Daily.DaysOfWeek.Monday"></abp-input>
+                                        @*     <input type="checkbox" name="trigger[daily.daysOfWeek.monday]" value="True" @(Model.ScheduleJob.Trigger.Daily.DaysOfWeek.Monday ? "Checked" : "") />
+                                        <label>Monday</label> *@
+                                    </div>
+                                </div>
+                                <div class="field">
+                                    <div class="ui checkbox">
+                                        <abp-input name="trigger[daily.daysOfWeek.tuesday]" value="True" class="form-check form-check-inline" asp-for="@Model.ScheduleJob.Trigger.Daily.DaysOfWeek.Tuesday"></abp-input>
+                                        @*       <input type="checkbox" name="trigger[daily.daysOfWeek.tuesday]" value="True" @(Model.ScheduleJob.Trigger.Daily.DaysOfWeek.Tuesday ? "Checked" : "") />
+                                        <label>Tuesday</label> *@
+                                    </div>
+                                </div>
+                                <div class="field">
+                                    <div class="ui checkbox">
+                                        <abp-input name="trigger[daily.daysOfWeek.wednesday]" class="form-check form-check-inline" asp-for="@Model.ScheduleJob.Trigger.Daily.DaysOfWeek.Wednesday"></abp-input>
+                                        @*    <input type="checkbox" name="trigger[daily.daysOfWeek.wednesday]" value="True" @(Model.ScheduleJob.Trigger.Daily.DaysOfWeek.Wednesday ? "Checked" : "") />
+                                        <label>Wednesday</label> *@
+                                    </div>
+                                </div>
+                                <div class="field">
+                                    <div class="ui checkbox">
+                                        <abp-input name="trigger[daily.daysOfWeek.thursday]" class="form-check form-check-inline" asp-for="@Model.ScheduleJob.Trigger.Daily.DaysOfWeek.Thursday"></abp-input>
+                                        @*   <input type="checkbox" name="trigger[daily.daysOfWeek.thursday]" value="True" @(Model.ScheduleJob.Trigger.Daily.DaysOfWeek.Thursday ? "Checked" : "") />
+                                        <label>Thursday</label> *@
+                                    </div>
+                                </div>
+                                <div class="field">
+                                    <div class="ui checkbox">
+                                        <abp-input name="trigger[daily.daysOfWeek.friday]" class="form-check form-check-inline" asp-for="@Model.ScheduleJob.Trigger.Daily.DaysOfWeek.Friday"></abp-input>
+                                        @*      <input type="checkbox" name="trigger[daily.daysOfWeek.friday]" value="True" @(Model.ScheduleJob.Trigger.Daily.DaysOfWeek.Friday ? "Checked" : "") />
+                                        <label>Friday</label> *@
+                                    </div>
+                                </div>
+                                <div class="field">
+                                    <div class="ui checkbox">
+                                        <abp-input name="trigger[daily.daysOfWeek.saturday]" class="form-check form-check-inline" asp-for="@Model.ScheduleJob.Trigger.Daily.DaysOfWeek.Saturday"></abp-input>
+                                        @*   <input type="checkbox" name="trigger[daily.daysOfWeek.saturday]" value="True" @(Model.ScheduleJob.Trigger.Daily.DaysOfWeek.Saturday ? "Checked" : "") />
+                                        <label>Saturday</label> *@
+                                    </div>
+                                </div>
+                                <div class="field">
+                                    <div class="ui checkbox">
+                                        <abp-input name="trigger[daily.daysOfWeek.sunday]" class="form-check form-check-inline" asp-for="@Model.ScheduleJob.Trigger.Daily.DaysOfWeek.Sunday"></abp-input>
+                                        @*     <input type="checkbox" name="trigger[daily.daysOfWeek.sunday]" value="True" @(Model.ScheduleJob.Trigger.Daily.DaysOfWeek.Sunday ? "Checked" : "") />
+                                        <label>Sunday</label> *@
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+        
+    </abp-card-body>
+    </form>
+</abp-card>

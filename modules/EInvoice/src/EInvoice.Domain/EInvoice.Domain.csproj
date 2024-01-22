@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="..\..\common.props" />
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0;netstandard2.1;net7.0</TargetFrameworks>
+    <Nullable>enable</Nullable>
+    <RootNamespace>EInvoice</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Volo.Abp.Ddd.Domain" Version="7.4.2" />
+    <ProjectReference Include="..\..\..\FileManagement\src\EasyAbp.FileManagement.Domain\EasyAbp.FileManagement.Domain.csproj" />
+    <ProjectReference Include="..\EInvoice.Domain.Shared\EInvoice.Domain.Shared.csproj" />
+  </ItemGroup>
+
+</Project>

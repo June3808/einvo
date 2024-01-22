@@ -1,0 +1,33 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="..\..\common.props" />
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0;netstandard2.1;net7.0</TargetFrameworks>
+    <Nullable>enable</Nullable>
+    <RootNamespace>Sys</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\modules\EInvoice\src\EInvoice.HttpApi.Client\EInvoice.HttpApi.Client.csproj" />
+    <ProjectReference Include="..\..\..\modules\TaskScheduler\src\TaskScheduler.HttpApi.Client\TaskScheduler.HttpApi.Client.csproj" />
+    <ProjectReference Include="..\Sys.Application.Contracts\Sys.Application.Contracts.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="EasyAbp.Abp.SettingUi.HttpApi.Client" Version="1.12.0" />
+    <PackageReference Include="EasyAbp.LoggingManagement.HttpApi.Client" Version="0.9.0" />
+    <PackageReference Include="Volo.Abp.Account.HttpApi.Client" Version="7.4.2" />
+    <PackageReference Include="Volo.Abp.Identity.HttpApi.Client" Version="7.4.2" />
+    <PackageReference Include="Volo.Abp.PermissionManagement.HttpApi.Client" Version="7.4.2" />
+    <PackageReference Include="Volo.Abp.TenantManagement.HttpApi.Client" Version="7.4.2" />
+    <PackageReference Include="Volo.Abp.FeatureManagement.HttpApi.Client" Version="7.4.2" />
+    <PackageReference Include="Volo.Abp.SettingManagement.HttpApi.Client" Version="7.4.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="**\*generate-proxy.json" />
+    <Content Remove="**\*generate-proxy.json" />
+  </ItemGroup>
+
+</Project>

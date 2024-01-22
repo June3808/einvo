@@ -1,0 +1,42 @@
+body {
+    
+}
+.easy-pie-chart {
+    text-align: center;
+}
+
+    .easy-pie-chart .number {
+        font-size: 14px !important;
+        font-weight: 300;
+        margin: 0 auto;
+        position: relative;
+        text-align: center;
+        width: 75px;
+        height: 75px;
+        line-height: 75px;
+    }
+
+        .easy-pie-chart .number canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+    .easy-pie-chart .title {
+        display: block;
+        text-align: center;
+        color: #333;
+        font-weight: 300;
+        font-size: 16px;
+        margin-top: 5px;
+        margin-bottom: 10px;
+    }
+
+        .easy-pie-chart .title:hover {
+            color: #666;
+            text-decoration: none;
+        }
+
+        .easy-pie-chart .title > i {
+            margin-top: 5px;
+        }

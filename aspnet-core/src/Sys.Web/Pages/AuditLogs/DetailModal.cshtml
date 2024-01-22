@@ -1,0 +1,99 @@
+﻿@page
+@using Microsoft.AspNetCore.Mvc.Localization
+@using Volo.Abp.AspNetCore.Mvc.UI.Bootstrap.TagHelpers.Modal
+@using Sys.Localization;
+@inject IHtmlLocalizer<SysResource> L
+@model Sys.Web.Pages.AuditLogs.DetailModalModel
+@{
+    Layout = null;
+}
+@* <abp-dynamic-form abp-model="SystemLog" data-ajaxForm="true" asp-page="DetailModal" data-check-form-on-close="false">
+    <abp-modal>
+        <abp-modal-header title="@L["SystemLog"].Value"></abp-modal-header>
+        <abp-modal-body>
+            <abp-form-content />
+        </abp-modal-body>
+        <abp-modal-footer buttons="@(AbpModalButtons.Close)"></abp-modal-footer>
+    </abp-modal>
+</abp-dynamic-form> *@
+
+@* <abp-modal asp-page="DetailModal" data-ajaxForm="true">
+    <abp-modal-header title="@L["SystemLog"].Value"></abp-modal-header>
+    <abp-modal-body>
+        <abp-tabs>
+            <abp-tab title="Home">
+                <abp-dynamic-form abp-model="SystemLog.one"  data-check-form-on-close="false"></abp-dynamic-form>
+            </abp-tab>
+            <abp-tab title="Det">
+                <abp-dynamic-form abp-model="SystemLog.two" data-check-form-on-close="false"></abp-dynamic-form>
+            </abp-tab>
+        </abp-tabs>
+    </abp-modal-body>
+    <abp-modal-footer buttons="@(AbpModalButtons.Close)"></abp-modal-footer>
+</abp-modal>
+ *@
+
+<abp-modal abp-model="SystemLog" asp-page="DetailModal" data-ajaxForm="true" size="Large">
+    <abp-modal-header title="@L["SystemLog"].Value"></abp-modal-header>
+    <abp-modal-body>
+        <abp-tabs>
+            <abp-tab title="Overall">
+                 @*    <div>
+                        <label class="col-md">@L["UserName"].Value</label>
+                        <label class="col-md"></label>
+                    </div> *@
+                @*<abp-input asp-for="SystemLog.ApplicationName"></abp-input> *@
+                <abp-input asp-for="SystemLog.applicationName"></abp-input>
+                <abp-input asp-for="SystemLog.userName"></abp-input>
+                <abp-input asp-for="SystemLog.executionTime"></abp-input>
+                <abp-input asp-for="SystemLog.executionDuration"></abp-input>
+                <abp-input asp-for="SystemLog.clientIpAddress"></abp-input>
+                <abp-input asp-for="SystemLog.clientName"></abp-input>
+                <abp-input asp-for="SystemLog.browser"></abp-input>
+                <abp-input asp-for="SystemLog.exceptions"></abp-input>
+            </abp-tab>
+
+            <abp-tab title="Action">
+                @* <abp-input asp-for="SystemLog.actions"></abp-input> *@
+                <label class="form-label" for="SystemLog_actions">Actions</label>
+                <pre lang="js" id="SystemLog_actions" class="form-control">test</pre>
+            </abp-tab>
+        </abp-tabs>
+    </abp-modal-body>
+    <abp-modal-footer buttons="@(AbpModalButtons.Close)"></abp-modal-footer>
+ </abp-modal>
+
+
+<script>
+    $(function () {
+        // $("#SystemLog_ApplicationName").text(currentDetailModalData.applicationName)
+        // $("#SystemLog_LogName").val(currentDetailModalData.logName)
+
+        for (var rec in currentDetailModalData) {
+            if (rec == "executionTime") {
+                let time = moment.utc(currentDetailModalData[rec]).toDate();
+                $("#SystemLog_" + rec).attr("value", time.toJSON().slice(0, 19));
+            }
+            else if (rec == "actions") {
+                
+                let json = getFormattedParameters(currentDetailModalData[rec]);
+                console.log(json);
+                $("#SystemLog_" + rec).html(json);
+            }
+            else {
+                $("#SystemLog_" + rec).val(currentDetailModalData[rec]);
+            }
+           
+        }
+
+
+        function getFormattedParameters(parameters) {
+            try {
+                // var json = JSON.parse(parameters);
+                return JSON.stringify(parameters, null, 4);
+            } catch (e) {
+                return parameters;
+            }
+        }
+    })
+</script>

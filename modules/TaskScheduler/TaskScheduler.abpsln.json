@@ -1,0 +1,7 @@
+{
+  "modules": {
+    "TaskScheduler": {
+      "path": "TaskScheduler.abpmdl.json"
+    }
+  }
+}

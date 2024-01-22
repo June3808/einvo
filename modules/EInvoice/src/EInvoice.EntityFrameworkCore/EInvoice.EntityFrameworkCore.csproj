@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="..\..\common.props" />
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <RootNamespace>EInvoice</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Volo.Abp.EntityFrameworkCore" Version="7.4.2" />
+    <ProjectReference Include="..\..\..\FileManagement\src\EasyAbp.FileManagement.EntityFrameworkCore\EasyAbp.FileManagement.EntityFrameworkCore.csproj" />
+    <ProjectReference Include="..\EInvoice.Domain\EInvoice.Domain.csproj" />
+  </ItemGroup>
+
+</Project>

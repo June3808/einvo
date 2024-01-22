@@ -1,0 +1,63 @@
+﻿@page
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Mvc.Localization;
+@using TaskScheduler.Permissions
+@using Volo.Abp.AspNetCore.Mvc.UI.Layout;
+@using TaskScheduler.Localization;
+@using TaskScheduler.Web.Menus;
+@using Volo.Abp.Users
+@* @model Sys.Web.Pages.tas.IndexModel *@
+@inject IPageLayout PageLayout
+@inject IHtmlLocalizer<TaskSchedulerResource> L
+@inject IAuthorizationService Authorization
+@inject ICurrentUser CurrentUser
+@{
+    PageLayout.Content.Title = L["TaskScheduler"].Value;
+    PageLayout.Content.BreadCrumb.Add(L["Menu:TaskScheduler"].Value);
+    PageLayout.Content.MenuItemName = TaskSchedulerMenus.TaskScheduler;
+}
+@section scripts
+{
+    @* <abp-script src="/Pages/LoggingManagement/SystemLogs/index.js" /> *@
+    <abp-script src="/Pages/TaskScheduler/index.js"></abp-script>
+
+}
+@section styles
+{
+    @* <abp-style src="/Pages/LoggingManagement/SystemLogs/index.css" /> *@
+}
+
+<abp-card>
+    <abp-card-header>
+        <abp-row>
+            <abp-column size-md="_6">
+                <abp-card-title>@L["TaskScheduler"]</abp-card-title>
+            </abp-column>
+            <abp-column>
+
+                @if (await Authorization.IsGrantedAsync(TaskSchedulerPermissions.TaskScheduler.Create))
+                {
+                    <a class="btn btn-primary float-end" href="~/TaskScheduler/Create">
+                        Create Page
+                    </a>
+                }
+
+            </abp-column>
+        </abp-row>
+    </abp-card-header>
+    <abp-card-body>
+        <abp-table striped-rows="true" id="TaskSchedulerTable" class="nowrap">
+            <thead>
+                <tr>
+                    <th>@L["Actions"]</th>
+                    <th>@L["JobStatus"]</th>
+                    <th>@L["JobRunStatus"]</th>
+                    <th>@L["JobName"]</th>
+                    <th>@L["StartDateTime"]</th>
+                    <th>@L["LastExecuteTime"]</th>
+                    <th>@L["EndDateTime"]</th>
+                </tr>
+            </thead>
+        </abp-table>
+    </abp-card-body>
+</abp-card>

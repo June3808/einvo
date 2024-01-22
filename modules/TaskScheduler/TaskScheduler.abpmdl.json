@@ -1,0 +1,111 @@
+{
+  "folders": {
+    "items": {
+      "src": {},
+      "test": {},
+      "host": {}
+    }
+  },
+  "packages": {
+    "TaskScheduler.Domain.Shared": {
+      "path": "src/TaskScheduler.Domain.Shared/TaskScheduler.Domain.Shared.abppkg.json",
+      "folder": "src"
+    },
+    "TaskScheduler.Domain": {
+      "path": "src/TaskScheduler.Domain/TaskScheduler.Domain.abppkg.json",
+      "folder": "src"
+    },
+    "TaskScheduler.Application.Contracts": {
+      "path": "src/TaskScheduler.Application.Contracts/TaskScheduler.Application.Contracts.abppkg.json",
+      "folder": "src"
+    },
+    "TaskScheduler.Application": {
+      "path": "src/TaskScheduler.Application/TaskScheduler.Application.abppkg.json",
+      "folder": "src"
+    },
+    "TaskScheduler.EntityFrameworkCore": {
+      "path": "src/TaskScheduler.EntityFrameworkCore/TaskScheduler.EntityFrameworkCore.abppkg.json",
+      "folder": "src"
+    },
+    "TaskScheduler.MongoDB": {
+      "path": "src/TaskScheduler.MongoDB/TaskScheduler.MongoDB.abppkg.json",
+      "folder": "src"
+    },
+    "TaskScheduler.HttpApi": {
+      "path": "src/TaskScheduler.HttpApi/TaskScheduler.HttpApi.abppkg.json",
+      "folder": "src"
+    },
+    "TaskScheduler.HttpApi.Client": {
+      "path": "src/TaskScheduler.HttpApi.Client/TaskScheduler.HttpApi.Client.abppkg.json",
+      "folder": "src"
+    },
+    "TaskScheduler.TestBase": {
+      "path": "test/TaskScheduler.TestBase/TaskScheduler.TestBase.abppkg.json",
+      "folder": "test"
+    },
+    "TaskScheduler.EntityFrameworkCore.Tests": {
+      "path": "test/TaskScheduler.EntityFrameworkCore.Tests/TaskScheduler.EntityFrameworkCore.Tests.abppkg.json",
+      "folder": "test"
+    },
+    "TaskScheduler.MongoDB.Tests": {
+      "path": "test/TaskScheduler.MongoDB.Tests/TaskScheduler.MongoDB.Tests.abppkg.json",
+      "folder": "test"
+    },
+    "TaskScheduler.Domain.Tests": {
+      "path": "test/TaskScheduler.Domain.Tests/TaskScheduler.Domain.Tests.abppkg.json",
+      "folder": "test"
+    },
+    "TaskScheduler.Application.Tests": {
+      "path": "test/TaskScheduler.Application.Tests/TaskScheduler.Application.Tests.abppkg.json",
+      "folder": "test"
+    },
+    "TaskScheduler.HttpApi.Host": {
+      "path": "host/TaskScheduler.HttpApi.Host/TaskScheduler.HttpApi.Host.abppkg.json",
+      "folder": "host"
+    },
+    "TaskScheduler.Web": {
+      "path": "src/TaskScheduler.Web/TaskScheduler.Web.abppkg.json",
+      "folder": "src"
+    },
+    "TaskScheduler.HttpApi.Client.ConsoleTestApp": {
+      "path": "test/TaskScheduler.HttpApi.Client.ConsoleTestApp/TaskScheduler.HttpApi.Client.ConsoleTestApp.abppkg.json",
+      "folder": "test"
+    },
+    "TaskScheduler.Web.Host": {
+      "path": "host/TaskScheduler.Web.Host/TaskScheduler.Web.Host.abppkg.json",
+      "folder": "host"
+    },
+    "TaskScheduler.AuthServer": {
+      "path": "host/TaskScheduler.AuthServer/TaskScheduler.AuthServer.abppkg.json",
+      "folder": "host"
+    },
+    "TaskScheduler.Host.Shared": {
+      "path": "host/TaskScheduler.Host.Shared/TaskScheduler.Host.Shared.abppkg.json",
+      "folder": "host"
+    },
+    "TaskScheduler.Web.Unified": {
+      "path": "host/TaskScheduler.Web.Unified/TaskScheduler.Web.Unified.abppkg.json",
+      "folder": "host"
+    },
+    "TaskScheduler.Blazor": {
+      "path": "src/TaskScheduler.Blazor/TaskScheduler.Blazor.abppkg.json",
+      "folder": "src"
+    },
+    "TaskScheduler.Blazor.Host": {
+      "path": "host/TaskScheduler.Blazor.Host/TaskScheduler.Blazor.Host.abppkg.json",
+      "folder": "host"
+    },
+    "TaskScheduler.Blazor.Server": {
+      "path": "src/TaskScheduler.Blazor.Server/TaskScheduler.Blazor.Server.abppkg.json",
+      "folder": "src"
+    },
+    "TaskScheduler.Blazor.WebAssembly": {
+      "path": "src/TaskScheduler.Blazor.WebAssembly/TaskScheduler.Blazor.WebAssembly.abppkg.json",
+      "folder": "src"
+    },
+    "TaskScheduler.Blazor.Server.Host": {
+      "path": "host/TaskScheduler.Blazor.Server.Host/TaskScheduler.Blazor.Server.Host.abppkg.json",
+      "folder": "host"
+    }
+  }
+}
