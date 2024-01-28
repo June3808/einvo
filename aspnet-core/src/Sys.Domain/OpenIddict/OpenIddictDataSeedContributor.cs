@@ -25,7 +25,7 @@ public class OpenIddictDataSeedContributor : IDataSeedContributor, ITransientDep
 {
     private readonly IConfiguration _configuration;
     private readonly IOpenIddictApplicationRepository _openIddictApplicationRepository;
-    private readonly IAbpApplicationManager _applicationManager;
+    private readonly IOpenIddictApplicationManager _applicationManager;
     private readonly IOpenIddictScopeRepository _openIddictScopeRepository;
     private readonly IOpenIddictScopeManager _scopeManager;
     private readonly IPermissionDataSeeder _permissionDataSeeder;
@@ -96,7 +96,7 @@ public class OpenIddictDataSeedContributor : IDataSeedContributor, ITransientDep
                 secret: configurationSection["Sys_Web:ClientSecret"] ?? "1q2w3e*",
                 grantTypes: new List<string> //Hybrid flow
                 {
-                    OpenIddictConstants.GrantTypes.AuthorizationCode, OpenIddictConstants.GrantTypes.Implicit
+                    OpenIddictConstants.GrantTypes.AuthorizationCode, OpenIddictConstants.GrantTypes.Implicit, OpenIddictConstants.GrantTypes.ClientCredentials, OpenIddictConstants.GrantTypes.Password
                 },
                 scopes: commonScopes,
                 redirectUris: webClientRootUrl.Select(x => $"{x}signin-oidc").ToArray(),
@@ -209,7 +209,7 @@ public class OpenIddictDataSeedContributor : IDataSeedContributor, ITransientDep
                 consentType: OpenIddictConstants.ConsentTypes.Implicit,
                 displayName: "Swagger Application",
                 secret: null,
-                grantTypes: new List<string> { OpenIddictConstants.GrantTypes.AuthorizationCode, },
+                grantTypes: new List<string> { OpenIddictConstants.GrantTypes.AuthorizationCode, OpenIddictConstants.GrantTypes.Implicit, OpenIddictConstants.GrantTypes.ClientCredentials, OpenIddictConstants.GrantTypes.Password },
                 scopes: commonScopes,
                 redirectUris: swaggerRootUrl?.Select(x => $"{x}/swagger/oauth2-redirect.html").ToArray(),
                 clientUris: swaggerRootUrl

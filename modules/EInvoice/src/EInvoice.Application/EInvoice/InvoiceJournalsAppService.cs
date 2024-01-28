@@ -22,6 +22,11 @@ using Volo.Abp;
 using Volo.Abp.Uow;
 using EasyAbp.FileManagement.Application;
 using NPOI.SS.UserModel;
+using Microsoft.Extensions.Logging;
+using System.Text.Json.Serialization;
+using System.Net.Http.Json;
+//using Newtonsoft.Json;
+using System.Text.Json;
 
 namespace EInvoice;
 
@@ -127,7 +132,7 @@ public class InvoiceJournalsAppService : CrudAppService<InvoiceJournals, Invoice
                 var steam = fileInfo.GetStream(); // file steam in memory
 
                 // handle csv upload
-                if(fileInfo.FileName !=null && fileInfo.FileName.ToLower().IndexOf(".csv") != -1)
+                if (fileInfo.FileName != null && fileInfo.FileName.ToLower().IndexOf(".csv") != -1)
                 {
                     var reader = new StreamReader(steam, Encoding.UTF8);
 
@@ -208,14 +213,14 @@ public class InvoiceJournalsAppService : CrudAppService<InvoiceJournals, Invoice
                 }
 
                 //handle excel upload
-                if(fileInfo.FileName !=null && fileInfo.FileName.ToLower().IndexOf(".xlsx") != -1)
+                if (fileInfo.FileName != null && fileInfo.FileName.ToLower().IndexOf(".xlsx") != -1)
                 {
 
                     MemoryStream objMemoryStream = new MemoryStream();
                     fileInfo.GetStream().CopyTo(objMemoryStream);
 
 
-                    var worksheet = CustomDtoExcelImporter.ImportEntityFromStream(fileInfo.FileName,objMemoryStream);
+                    var worksheet = CustomDtoExcelImporter.ImportEntityFromStream(fileInfo.FileName, objMemoryStream);
 
                     var rowEnumerator = worksheet.GetRowEnumerator();
                     rowEnumerator.Reset();
@@ -314,10 +319,10 @@ public class InvoiceJournalsAppService : CrudAppService<InvoiceJournals, Invoice
         }
         catch (Exception ex)
         {
-            ex=ex.GetBaseException();
+            ex = ex.GetBaseException();
             throw new UserFriendlyException(ex.Message);
         }
-        
+
 
         var fileReturn = await _service.CreateManyWithStreamAsync(input);
 
@@ -332,13 +337,13 @@ public class InvoiceJournalsAppService : CrudAppService<InvoiceJournals, Invoice
     }
 
     private DateTime convertMYdatetime(string strDatetime)
-    {  
-        if(strDatetime.IsNullOrEmpty())
+    {
+        if (strDatetime.IsNullOrEmpty())
             return DateTime.MinValue;
         DateTime dateTime;
         string[] enUKformats = { "dd-MM-yyyy" }; // malaysia,UK,SG
         bool success = DateTime.TryParseExact(strDatetime, enUKformats, new CultureInfo("en-UK"), DateTimeStyles.None, out dateTime);
-        if(!success)
+        if (!success)
         {
             string format_uk2 = "d/M/yyyy"; // malaysia,UK,SG
             success = DateTime.TryParseExact(strDatetime, format_uk2, null, DateTimeStyles.None, out dateTime);
@@ -362,5 +367,13 @@ public class InvoiceJournalsAppService : CrudAppService<InvoiceJournals, Invoice
             return DateTime.MinValue;
 
         return date;
+    }
+
+    public void test(dynamic obj)
+    {
+        Logger.LogInformation("api works!!");
+        string json = JsonSerializer.Serialize(obj);
+
+        Logger.LogInformation(json);
     }
 }

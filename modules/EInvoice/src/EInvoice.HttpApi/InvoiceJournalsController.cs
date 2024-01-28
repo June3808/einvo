@@ -63,6 +63,13 @@ namespace EInvoice
             return await _invoiceJournalsAppService.GetListAsync(input);
         }
 
+        [HttpPost]
+        [Route("test")]
+        [Authorize]
+        public void test(dynamic obj)
+        {
+            _invoiceJournalsAppService.test(obj);
+        }
 
         [HttpPost]
         [Route("update")]

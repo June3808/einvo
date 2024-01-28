@@ -18,4 +18,5 @@ public interface IInvoiceJournalsAppService :
 
     Task<CreateManyFileOutput> CreateManyWithStreamAsync(CreateManyFileWithStreamInput input);
 
+    void test(dynamic obj);
 }

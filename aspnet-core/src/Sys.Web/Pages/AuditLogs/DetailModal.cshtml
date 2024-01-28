@@ -43,57 +43,46 @@
                         <label class="col-md"></label>
                     </div> *@
                 @*<abp-input asp-for="SystemLog.ApplicationName"></abp-input> *@
-                <abp-input asp-for="SystemLog.applicationName"></abp-input>
-                <abp-input asp-for="SystemLog.userName"></abp-input>
-                <abp-input asp-for="SystemLog.executionTime"></abp-input>
-                <abp-input asp-for="SystemLog.executionDuration"></abp-input>
-                <abp-input asp-for="SystemLog.clientIpAddress"></abp-input>
-                <abp-input asp-for="SystemLog.clientName"></abp-input>
-                <abp-input asp-for="SystemLog.browser"></abp-input>
-                <abp-input asp-for="SystemLog.exceptions"></abp-input>
+                <abp-input asp-for="AuditDto.ApplicationName" readonly="true"></abp-input>
+                <abp-input asp-for="AuditDto.UserName" readonly="true"></abp-input>
+                <abp-input asp-for="AuditDto.ExecutionTime" readonly="true"></abp-input>
+                <abp-input asp-for="AuditDto.ExecutionDuration" readonly="true"></abp-input>
+                <abp-input asp-for="AuditDto.ClientIpAddress" readonly="true"></abp-input>
+                <abp-input asp-for="AuditDto.ClientName" readonly="true"></abp-input>
+                <abp-input asp-for="AuditDto.BrowserInfo" readonly="true"></abp-input>
+                <abp-input asp-for="AuditDto.Exceptions" readonly="true"></abp-input>
             </abp-tab>
 
-            <abp-tab title="Action">
-                @* <abp-input asp-for="SystemLog.actions"></abp-input> *@
-                <label class="form-label" for="SystemLog_actions">Actions</label>
+            <abp-tab title="Action (@Model.AuditDto.Actions.Count())">
+                @* <abp-input asp-for="AuditDto.Actions"></abp-input> *@
+       @*          <label class="form-label" for="SystemLog_actions">Actions</label>
                 <pre lang="js" id="SystemLog_actions" class="form-control">test</pre>
+                <input type="hidden" id="actions" value="@Html.Raw(Model.AuditDto.ActionString)" /> *@
+
+                @{
+                    var count = 1;
+                    var actionClassName = string.Empty;
+                    foreach (var action in Model.AuditDto.Actions)
+                    {
+                        actionClassName = "actions_" + count;
+
+                        <abp-input readonly="true" asp-for="@action.ServiceName"></abp-input>
+                        @* <abp-input readonly="true" asp-for="@action.ServiceName"></abp-input> *@
+                        <abp-input readonly="true" asp-for="@action.MethodName"></abp-input>
+                        <abp-input readonly="true" asp-for="@action.ExecutionTime"></abp-input>
+                        <abp-input readonly="true" asp-for="@action.ExecutionDuration"></abp-input>
+                        <pre lang="js" class="actions form-control @actionClassName"></pre>
+
+                        <input type="hidden" class="actions hidden @actionClassName" value="@action.Parameters" />
+
+
+                        <hr style="border-color:dimgrey" />
+                        
+                        count++;
+                    }   
+                }
             </abp-tab>
         </abp-tabs>
     </abp-modal-body>
     <abp-modal-footer buttons="@(AbpModalButtons.Close)"></abp-modal-footer>
  </abp-modal>
-
-
-<script>
-    $(function () {
-        // $("#SystemLog_ApplicationName").text(currentDetailModalData.applicationName)
-        // $("#SystemLog_LogName").val(currentDetailModalData.logName)
-
-        for (var rec in currentDetailModalData) {
-            if (rec == "executionTime") {
-                let time = moment.utc(currentDetailModalData[rec]).toDate();
-                $("#SystemLog_" + rec).attr("value", time.toJSON().slice(0, 19));
-            }
-            else if (rec == "actions") {
-                
-                let json = getFormattedParameters(currentDetailModalData[rec]);
-                console.log(json);
-                $("#SystemLog_" + rec).html(json);
-            }
-            else {
-                $("#SystemLog_" + rec).val(currentDetailModalData[rec]);
-            }
-           
-        }
-
-
-        function getFormattedParameters(parameters) {
-            try {
-                // var json = JSON.parse(parameters);
-                return JSON.stringify(parameters, null, 4);
-            } catch (e) {
-                return parameters;
-            }
-        }
-    })
-</script>

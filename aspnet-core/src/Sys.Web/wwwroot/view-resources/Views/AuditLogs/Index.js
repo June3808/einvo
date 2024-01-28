@@ -1,8 +1,20 @@
 ﻿$(function () {
     var l = abp.localization.getResource('SysResource');
 
-    var service = Sys.auditLogs.auditLog;
-    var detailModal = new abp.ModalManager(abp.appPath + 'AuditLogs/DetailModal');
+    let queryString = "";
+    let userName = "";
+    let startTime = $("#QueryModel_StartTime").val();
+    let endTime = $("#QueryModel_EndTime").val();
+    let hasException = $("#QueryModel_HasException").val();
+    let applicationName = $("#QueryModel_ApplicationName").val();
+    //let serviceName = $("#QueryModel_UserName").val();
+
+    var service = sys.auditLogs.auditLog;
+    var detailModal = new abp.ModalManager({
+        viewUrl: abp.appPath + 'AuditLogs/DetailModal',
+        //scriptUrl: '/view-resources/Views/AuditLogs/_DetailModals.js',
+        modalClass: 'AuditlogDetailModal'
+    });
 
     var dataTable = $('#SystemLogTable').DataTable(abp.libs.datatables.normalizeConfiguration({
         processing: true,
@@ -42,13 +54,13 @@
                             {
                                 text: l('Detail'),
                                 action: function (data) {
-                                    for (var rec in data.record) {
-                                        currentDetailModalData[rec] = data.record[rec];
-                                    }
+                                    //for (var rec in data.record) {
+                                    //    currentDetailModalData[rec] = data.record[rec];
+                                    //}
 
-                                    console.log("currentDetailModalData");
-                                    console.log(currentDetailModalData);
-                                    detailModal.open();
+                                    //console.log("currentDetailModalData");
+                                    //console.log(currentDetailModalData);
+                                    detailModal.open({ id: data.record.id });
                                 }
                             }
                         ]
@@ -70,8 +82,12 @@
                 title: l('httpMethod'),
                 data: "httpMethod",
                 render: function (data,type,row) {
-                    console.log(row);
-                    let html = '<span class="badge bg-warning">' + row.httpStatusCode + '</span>&nbsp' + row.httpMethod;
+                    //console.log(row);
+                    let html = '';
+
+                    if (row.httpMethod != null)
+                        html = '<span class="badge bg-warning">' + row.httpStatusCode + '</span>&nbsp' + row.httpMethod;
+
                     return html;
                 }
             },

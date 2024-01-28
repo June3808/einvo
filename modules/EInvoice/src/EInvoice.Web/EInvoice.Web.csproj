@@ -43,4 +43,8 @@
     <Content Remove="wwwroot\**\*.*" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Remove="Pages\_ViewImports.cshtml" />
+  </ItemGroup>
+
 </Project>
