@@ -5,11 +5,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Volo.Abp.Domain.Entities;
+using Volo.Abp.Domain.Entities.Auditing;
 
 namespace EInvoice
 {
-    public class InvoiceJournals:AggregateRoot<Guid>
+    public class InvoiceJournals: FullAuditedAggregateRoot<Guid>
     {
+        public virtual ProcessingStatus ProcessingStatus { get; set; }
         public virtual string SupplierName { get; set; }
         public virtual string SupplierTIN { get; set; }
         public virtual string SupplierIdentificationNo { get; set; }

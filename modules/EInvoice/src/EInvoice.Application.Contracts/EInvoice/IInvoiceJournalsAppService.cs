@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using EasyAbp.FileManagement.Files.Dtos;
 using EInvoice.Dtos;
@@ -19,4 +20,10 @@ public interface IInvoiceJournalsAppService :
     Task<CreateManyFileOutput> CreateManyWithStreamAsync(CreateManyFileWithStreamInput input);
 
     void test(dynamic obj);
+
+    Task<List<int>> MonthlyInvoiceCount();
+
+    Task<decimal> MonthlyInvoiceSum();
+
+    Task<decimal> YearlyInvoiceSum();
 }

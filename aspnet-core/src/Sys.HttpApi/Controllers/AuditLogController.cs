@@ -8,6 +8,7 @@ using Volo.Abp.Application.Dtos;
 using Volo.Abp;
 using Sys.Controllers;
 using Volo.Abp.AspNetCore.Mvc.ApiExploring;
+using Volo.Abp.Identity;
 
 namespace Sys.AuditLogs
 {
@@ -30,6 +31,16 @@ namespace Sys.AuditLogs
             return await _service.GetListAsync(input);
         }
 
+        [HttpGet]
+        public async Task<GetErrorRateOutput> GetErrorRateAsync(GetErrorRateFilter filter)
+        {
+            return await _service.GetErrorRateAsync(filter);
+        }
 
+        [HttpGet]
+        public async Task<ListResultDto<IdentityUserDto>> GetActiveUsersAsync(GetErrorRateFilter filter)
+        {
+            return await _service.GetActiveUsersAsync(filter);
+        }
     }
 }

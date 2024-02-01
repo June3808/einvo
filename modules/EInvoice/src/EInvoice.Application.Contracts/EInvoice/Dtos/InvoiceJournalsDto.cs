@@ -4,8 +4,9 @@ using Volo.Abp.Application.Dtos;
 namespace EInvoice.Dtos;
 
 [Serializable]
-public class InvoiceJournalsDto : EntityDto<Guid>
+public class InvoiceJournalsDto : FullAuditedEntityDto<Guid>
 {
+    public virtual ProcessingStatus ProcessingStatus { get; set; }
     public string SupplierName { get; set; }
 
     public string SupplierTIN { get; set; }

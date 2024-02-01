@@ -65,6 +65,24 @@ $(function () {
                 }
             },
             {
+                title: 'ProcessingStatus',
+                data: "processingStatus",
+                render: function (data) {
+                    return processingStatusFormatter(data);
+                }
+            },
+            {
+                title: "Import Date",
+                data: "creationTime",
+                render: function (data) {
+                    return luxon
+                        .DateTime
+                        .fromISO(data, {
+                            locale: abp.localization.currentCulture.name
+                        }).toFormat("dd-MM-yyyy HH:mm");
+                }
+            },
+            {
                 title: l('InvoiceJournalsSupplierName'),
                 data: "supplierName"
             },
@@ -150,11 +168,25 @@ $(function () {
             },
             {
                 title: l('InvoiceJournalsEInvoiceDateTime'),
-                data: "eInvoiceDateTime"
+                data: "eInvoiceDateTime",
+                render: function (data) {
+                    return luxon
+                        .DateTime
+                        .fromISO(data, {
+                            locale: abp.localization.currentCulture.name
+                        }).toFormat("dd-MM-yyyy HH:mm");
+                }
             },
             {
                 title: l('InvoiceJournalsEInvoiceValidationDateTime'),
-                data: "eInvoiceValidationDateTime"
+                data: "eInvoiceValidationDateTime",
+                render: function (data) {
+                    return luxon
+                        .DateTime
+                        .fromISO(data, {
+                            locale: abp.localization.currentCulture.name
+                        }).toFormat("dd-MM-yyyy HH:mm");
+                }
             },
             {
                 title: l('InvoiceJournalsIssuerDigitalSignature'),
@@ -258,7 +290,14 @@ $(function () {
             },
             {
                 title: l('InvoiceJournalsPaymentDate'),
-                data: "paymentDate"
+                data: "paymentDate",
+                render: function (data) {
+                    return luxon
+                        .DateTime
+                        .fromISO(data, {
+                            locale: abp.localization.currentCulture.name
+                        }).toFormat("dd-MM-yyyy HH:mm");
+                }
             },
             {
                 title: l('InvoiceJournalsPaymentReferNo'),
@@ -340,4 +379,24 @@ $(function () {
     uploadModal.onResult(function () {
         dataTable.ajax.reload();
     });
+
+    var processingStatusFormatter = function (value) {
+        console.log(value);
+        switch (value) {
+            case 5:
+                return 'OnHold';
+            case 4:
+                return 'Error';
+            case 3:
+                return 'Completed';
+            case 2:
+                return 'InProgress';
+            case 1:
+                return 'Ready';
+            case 0:
+                return 'Imported';
+            default:
+                return '';
+        }
+    }
 });

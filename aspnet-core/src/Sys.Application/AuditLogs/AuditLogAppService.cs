@@ -21,6 +21,8 @@ using System.Net;
 using Sys.AuditLogs;
 using Sys;
 using Sys.Permissions;
+using System.Threading;
+using Volo.Abp.Identity;
 
 namespace Sys.AuditLogs
 {
@@ -42,15 +44,19 @@ namespace Sys.AuditLogs
 
         protected IPermissionDefinitionManager PermissionDefinitionManager { get; }
 
+        private readonly IIdentityUserAppService userAppService;
+
         public AuditLogAppService(
             IAuditLogRepository auditLogRepository
             , IJsonSerializer jsonSerializer, IPermissionChecker permissionChecker, IPermissionDefinitionManager permissionDefinitionManager
+            , IIdentityUserAppService _userAppService
             )
         {
             this.AuditLogRepository = auditLogRepository;
             this.JsonSerializer = jsonSerializer;
             this.PermissionChecker = permissionChecker;
             this.PermissionDefinitionManager = permissionDefinitionManager;
+            this.userAppService = _userAppService;
         }
 
         public virtual async Task<PagedResultDto<AuditLogDto>> GetListAsync(GetAuditLogListDto input)
@@ -214,5 +220,25 @@ namespace Sys.AuditLogs
         //    //.WhereIf(input.HasException == false, item => item.AuditLog.Exception == null || item.AuditLog.Exception == "");
         //    return query;
         //}
+
+        public virtual async Task<ListResultDto<IdentityUserDto>> GetActiveUsersAsync(GetErrorRateFilter filter)
+        {
+            var query = await this.AuditLogRepository.GetQueryableAsync();
+            var userloglist = query
+                .Where(a => a.ExecutionTime < filter.EndDate.AddDays(1) && a.ExecutionTime > filter.StartDate)
+                .GroupBy(t => new { t.UserId })
+                .Select(g => new { Key = g.Key, Count = g.Count() })
+                .ToList();
+
+            var data = new List<IdentityUserDto>();
+            foreach (var userlog in userloglist) {
+                if (userlog.Key.UserId == null) continue;
+                var user = await userAppService.GetAsync(userlog.Key.UserId.GetValueOrDefault());
+                if (user == null) continue;
+                data.Add(user);
+            }
+            var result = new ListResultDto<IdentityUserDto>(data);
+            return result;
+        }
     }
 }

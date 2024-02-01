@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using EasyAbp.FileManagement.Files.Dtos;
 using EInvoice.Dtos;
@@ -64,6 +65,22 @@ namespace EInvoice
         }
 
         [HttpPost]
+        [Route("monthlyInvoiceCount")]
+        [Authorize]
+        public Task<List<int>> MonthlyInvoiceCount()
+        {
+            return _invoiceJournalsAppService.MonthlyInvoiceCount();
+        }
+
+        [HttpPost]
+        [Route("monthlyInvoiceSum")]
+        [Authorize]
+        public Task<decimal> MonthlyInvoiceSum()
+        {
+            return _invoiceJournalsAppService.MonthlyInvoiceSum();
+        }
+
+        [HttpPost]
         [Route("test")]
         [Authorize]
         public void test(dynamic obj)
@@ -77,6 +94,14 @@ namespace EInvoice
         public async Task<InvoiceJournalsDto> UpdateAsync(Guid id, CreateUpdateInvoiceJournalsDto input)
         {
             return await _invoiceJournalsAppService.UpdateAsync(id, input);
+        }
+
+        [HttpPost]
+        [Route("yearlyInvoiceSum")]
+        [Authorize]
+        public Task<decimal> YearlyInvoiceSum()
+        {
+            return _invoiceJournalsAppService.YearlyInvoiceSum();
         }
     }
 }

@@ -75,7 +75,7 @@
                         .DateTime
                         .fromISO(data, {
                             locale: abp.localization.currentCulture.name
-                        }).toFormat("yyyy-MM-dd HH:mm:ss");
+                        }).toFormat("dd-MM-yyyy HH:mm:ss");
                 }
             },
             {

@@ -27,6 +27,10 @@ using System.Text.Json.Serialization;
 using System.Net.Http.Json;
 //using Newtonsoft.Json;
 using System.Text.Json;
+using System.Text.Json.Nodes;
+using System.Linq.Dynamic.Core;
+using System.Runtime.Serialization.Json;
+using NPOI.POIFS.Storage;
 
 namespace EInvoice;
 
@@ -375,5 +379,57 @@ public class InvoiceJournalsAppService : CrudAppService<InvoiceJournals, Invoice
         string json = JsonSerializer.Serialize(obj);
 
         Logger.LogInformation(json);
+    }
+
+    public async Task<List<int>> MonthlyInvoiceCount()
+    {
+       var query = await Repository.GetQueryableAsync();
+       
+       var data =  query.Where(x=>x.CreationTime.Year == DateTime.Now.Year )
+            .GroupBy(x=>new { month = x.CreationTime.Month })
+            //.OrderBy(x => x.Key.month)
+            .Select(x => new InvoiceCount { Month = x.Key.month, Count = x.Count() })
+            .ToList();
+        
+        var result = new List<int>();
+        for (int i = 1; i < 13; i++) 
+        {
+            var value = data.Find(x => x.Month == i);
+            if(value != null)
+                result.Add(value.Count);
+            else
+                result.Add(0);
+        }
+        return result;
+    }
+
+    class InvoiceCount
+    {
+        public int Month { get; set; }
+        public int Count { get; set; }
+
+    }
+
+    public async Task<decimal> MonthlyInvoiceSum()
+    {
+        var query = await Repository.GetQueryableAsync();
+
+        var result = query.Where(x => x.CreationTime.Year == DateTime.Now.Year && x.CreationTime.Month == DateTime.Now.Month)
+             //.OrderBy(x => x.Key.month)
+             .Sum(x => x.PaymentAmount)
+             .GetValueOrDefault();
+        return result;
+    }
+
+
+    public async Task<decimal> YearlyInvoiceSum()
+    {
+        var query = await Repository.GetQueryableAsync();
+
+        var result = query.Where(x => x.CreationTime.Year == DateTime.Now.Year)
+             //.OrderBy(x => x.Key.month)
+             .Sum(x => x.PaymentAmount)
+             .GetValueOrDefault();
+        return result;
     }
 }

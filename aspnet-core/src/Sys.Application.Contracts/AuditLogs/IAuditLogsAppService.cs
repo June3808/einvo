@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Volo.Abp;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
+using Volo.Abp.Identity;
 
 namespace Sys.AuditLogs
 {
@@ -25,5 +26,7 @@ namespace Sys.AuditLogs
         Task<EntityChangeWithUsernameDto> GetEntityChangeWithUsernameAsync(Guid entityChangeId);
 
         Task<EntityChangeDto> GetEntityChangeAsync(Guid entityChangeId);
+
+        Task<ListResultDto<IdentityUserDto>> GetActiveUsersAsync(GetErrorRateFilter filter);
     }
 }
