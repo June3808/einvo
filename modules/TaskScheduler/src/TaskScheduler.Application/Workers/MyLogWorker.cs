@@ -17,9 +17,9 @@ using Volo.Abp.Threading;
 namespace TaskScheduler.Workers
 {
     [DisallowConcurrentExecution]
-    public class MyLogWorker : QuartzBackgroundWorkerBase, ISingletonDependency
+    public class IRBMSync : QuartzBackgroundWorkerBase, ISingletonDependency
     {
-        public MyLogWorker()
+        public IRBMSync()
         {
             AutoRegister = false;
             //JobDetail = JobBuilder.Create<MyLogWorker>().WithIdentity(nameof(MyLogWorker)).Build();

@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Configuration;
 using Sys.EntityFrameworkCore;
 using Sys.Localization;
 using Sys.MultiTenancy;
@@ -42,6 +43,8 @@ using Microsoft.Extensions.Hosting.Internal;
 using Microsoft.AspNetCore.Extensions.DependencyInjection;
 using OpenIddict.Validation.AspNetCore;
 using Volo.Abp.Security.Claims;
+using Volo.Abp.AspNetCore.Mvc.UI.Theme.Shared.Toolbars;
+using Sys.Web.Menus;
 
 namespace Sys;
 
@@ -146,7 +149,7 @@ public class SysAuthServerModule : AbpModule
         if (certCollection.Count > 0)
         {
             retVal = certCollection[0];
-        }
+        } 
 
         certStore.Close();
 
@@ -165,6 +168,7 @@ public class SysAuthServerModule : AbpModule
         var configuration = context.Services.GetConfiguration();
 
         //context.Services.ForwardIdentityAuthenticationForBearer(OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme);
+        ConfigureNavigationServices(configuration);
 
         Configure<AbpLocalizationOptions>(options =>
         {
@@ -252,6 +256,15 @@ public class SysAuthServerModule : AbpModule
                     .AllowAnyMethod()
                     .AllowCredentials();
             });
+        });
+    }
+
+    private void ConfigureNavigationServices(IConfiguration configuration)
+    {
+
+        Configure<AbpToolbarOptions>(options =>
+        {
+            options.Contributors.Add(new SysToolbarContributor());
         });
     }
 

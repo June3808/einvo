@@ -1,9 +1,11 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
+using System.Xml.Linq;
 using Volo.Abp.Application.Dtos;
 
 namespace TaskScheduler.TaskSchedulers.Dtos
@@ -19,8 +21,15 @@ namespace TaskScheduler.TaskSchedulers.Dtos
             this.Trigger = new JobTriggerDto();
         }
 
+        public bool IsEditMode
+        {
+            get { return (this.Id.HasValue || this.Id == Guid.Empty); }
+        }
+
+        [Required]
         public string JobName { get; set; } = string.Empty;
 
+        [Required]
         public string JobGroup { get; set; } = string.Empty;
 
         public List<ComboboxItemDto> JobGroupNames { get; set; }

@@ -117,6 +117,16 @@ namespace Sys.Migrations
                     b.Property<decimal?>("DiscountRate")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<string>("EInvoiceApiRequestJSON")
+                        .IsRequired()
+                        .HasMaxLength(10000)
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("EInvoiceApiResponseJSON")
+                        .IsRequired()
+                        .HasMaxLength(10000)
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("EInvoiceCode")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -128,6 +138,9 @@ namespace Sys.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("EInvoiceStatus")
+                        .HasColumnType("int");
+
                     b.Property<string>("EInvoiceType")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -137,6 +150,11 @@ namespace Sys.Migrations
 
                     b.Property<string>("EInvoiceVersion")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ErrorMessage")
+                        .IsRequired()
+                        .HasMaxLength(10000)
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ExtraProperties")
@@ -178,6 +196,10 @@ namespace Sys.Migrations
                         .HasColumnName("LastModifierId");
 
                     b.Property<string>("Measurement")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OrderNo")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("OtherCharges")

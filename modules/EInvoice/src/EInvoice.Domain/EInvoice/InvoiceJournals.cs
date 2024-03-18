@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using Volo.Abp.Domain.Entities;
@@ -9,9 +11,13 @@ using Volo.Abp.Domain.Entities.Auditing;
 
 namespace EInvoice
 {
-    public class InvoiceJournals: FullAuditedAggregateRoot<Guid>
+    public class InvoiceJournals : FullAuditedAggregateRoot<Guid>
     {
         public virtual ProcessingStatus ProcessingStatus { get; set; }
+
+        [StringLength(EInvoiceTableConsts.MaxErrorMessageLength, MinimumLength = EInvoiceTableConsts.MinErrorMessageLength)]
+        public virtual string ErrorMessage { get; set; }
+        public virtual string OrderNo { get; set; }
         public virtual string SupplierName { get; set; }
         public virtual string SupplierTIN { get; set; }
         public virtual string SupplierIdentificationNo { get; set; }
@@ -35,6 +41,13 @@ namespace EInvoice
         public virtual string EInvoiceOriginalReferNo { get; set; }
         public virtual DateTime EInvoiceDateTime { get; set; }
         public virtual DateTime EInvoiceValidationDateTime { get; set; }
+
+        public virtual EInvoiceStatus EInvoiceStatus { get; set; }
+
+        [StringLength(EInvoiceTableConsts.MaxParameterLength)]
+        public string EInvoiceApiRequestJSON { get; set; }
+        [StringLength(EInvoiceTableConsts.MaxParameterLength)]
+        public string EInvoiceApiResponseJSON { get; set; }
         public virtual string IssuerDigitalSignature { get; set; }
         public virtual string CurrencyCode { get; set; }
         public virtual decimal CurrencyExchangeRate { get; set; }

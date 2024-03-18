@@ -15,6 +15,8 @@ public class SysToolbarContributor : IToolbarContributor
             return Task.CompletedTask;
         }
 
+        context.Toolbar.Items.Clear();
+
         if (!context.ServiceProvider.GetRequiredService<ICurrentUser>().IsAuthenticated)
         {
             context.Toolbar.Items.Add(new ToolbarItem(typeof(LoginLinkViewComponent)));

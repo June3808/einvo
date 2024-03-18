@@ -54,7 +54,490 @@
                 </div>
               </div>
               <div class="row">
-                <div class="col-md-12 col-lg-5">
+            <div class="col-md-12 col-lg-6">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="d-flex align-items-baseline">
+                                    <h2 class="card-title">ERP Inbound Summary</h2>
+                                </div>
+                            </div>
+                            @* <div class="col-4">
+                                <div class="card w-100">
+                                    <div class="card-header">
+                                        <div class="d-inline-block bg-brand px-1 rounded-2 text-white">
+                                            <i class="bi bi-layout-wtf fs-3"></i>
+                                        </div>
+                                    </div>
+                                    <div class="card-body">
+                                        <span class="d-block">Total Sales</span>
+                                        <h1 class="card-title fs-2">$23,450</h1>
+                                        <div class="badge bg-brand soft"><i class="bi bi-arrow-down-right"></i> %2,50</div>
+                                    </div>
+                                </div>
+                            </div> *@
+                            <div class="col-4">
+                                <div class="card">
+                                    <div class="card-header">
+                                       @*  <div class="d-inline-block bg-brand px-1 rounded-2 text-white">
+                                            <i class="bi bi-layout-wtf fs-3"></i>
+
+                                        </div><h2 class="card-title">Inbound</h2> *@
+                                        <div class="row">
+                                            <div class="col">
+                                                <div class="d-flex align-items-baseline">
+                                                    <i class="bi bi-box-arrow-in-left fs-3"></i>&nbsp;
+                                                    <h2 class="card-title">Inbound</h2>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-body p-0">
+                                        <div class="p-3">
+                                            <h4 class="mb-1" id="InboundTotal">3,000</h4>
+                                            @* <div class="d-flex text-success">
+                                                <div class="me-2">
+                                                    <i class="bi bi-arrow-up-right"></i>
+                                                </div>
+                                                <span id="SucceedsToday">+210</span>
+                                            </div> *@
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-4">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <div class="row">
+                                            <div class="col">
+                                                <div class="d-flex align-items-baseline text-success">
+                                                    <i class="bi bi-check-circle-fill fs-3"></i>&nbsp;
+                                                    <h2 class="card-title">Successful</h2>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-body p-0">
+                                        <div class="p-3">
+                                            <h4 class="mb-1" id="InboundSuccessful">3,000</h4>
+                                            @* <div class="d-flex text-success">
+                                                <div class="me-2">
+                                                    <i class="bi bi-arrow-up-right"></i>
+                                                </div>
+                                                <span id="SucceedsToday">+210</span>
+                                            </div> *@
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <div class="row">
+                                            <div class="col">
+                                                <div class="d-flex align-items-baseline text-brand">
+                                                    <i class="bi bi-x-circle-fill fs-3"></i>&nbsp;
+                                                    <h2 class="card-title">Failed</h2>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-body p-0">
+                                        <div class="p-3">
+                                            <h4 class="mb-1" id="InboundFailed">10</h4>
+                                            @* <div class="d-flex text-brand">
+                                                <div class="me-2">
+                                                    <i class="bi bi-arrow-down-right"></i>
+                                                </div>
+                                                <span id="FailsToday">-5</span>
+                                            </div> *@
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="col-md-12 col-lg-6">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="d-flex align-items-baseline">
+                                    <h2 class="card-title">Middleware Outbound IRBM Summary</h2>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <div class="row">
+                                            <div class="col">
+                                                <div class="d-flex align-items-baseline">
+                                                    <i class="bi bi-box-arrow-right fs-3" ></i>&nbsp;
+                                                    <h2 class="card-title">Outbound</h2>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-body p-0">
+                                        <div class="p-3">
+                                            <h4 class="mb-1" id="OutboundTotal">3,000</h4>
+                                            @* <div class="d-flex text-success">
+                                                <div class="me-2">
+                                                    <i class="bi bi-arrow-up-right"></i>
+                                                </div>
+                                                <span id="SucceedsToday">+210</span>
+                                            </div> *@
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <div class="row">
+                                            <div class="col">
+                                                <div class="d-flex align-items-baseline text-success">
+                                                    <i class="bi bi-check-circle-fill fs-3"></i>&nbsp;
+                                                    <h2 class="card-title">Successful</h2>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-body p-0">
+                                        <div class="p-3">
+                                            <h4 class="mb-1" id="OutboundSuccessful">3,000</h4>
+                                            @* <div class="d-flex text-success">
+                                                <div class="me-2">
+                                                    <i class="bi bi-arrow-up-right"></i>
+                                                </div>
+                                                <span id="SucceedsToday">+210</span>
+                                            </div> *@
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <div class="row">
+                                            <div class="col">
+                                                <div class="d-flex align-items-baseline text-brand">
+                                                    <i class="bi bi-x-circle-fill fs-3"></i>&nbsp;
+                                                    <h2 class="card-title">Failed</h2>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-body p-0">
+                                        <div class="p-3">
+                                            <h4 class="mb-1" id="OutboundFailed">10</h4>
+                                            @* <div class="d-flex text-brand">
+                                                <div class="me-2">
+                                                    <i class="bi bi-arrow-down-right"></i>
+                                                </div>
+                                                <span id="FailsToday">-5</span>
+                                            </div> *@
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+            <!-- E-invoice status -->
+            <div class="col-md-12 col-lg-12">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="d-flex align-items-baseline">
+                                    <h2 class="card-title">E-Invoice Status Summary</h2>
+                                </div>
+                            </div>
+                            <div class="col-2">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <div class="row">
+                                            <div class="col">
+                                                <div class="d-flex align-items-baseline text-brand">
+                                                    <i class="bi bi-exclamation-circle fs-3"></i>&nbsp;
+                                                    <h2 class="card-title">Pending</h2>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-body p-0">
+                                        <div class="p-3">
+                                            <h4 class="mb-1" id="eInvoicePending">3,000</h4>
+                                            @* <div class="d-flex text-success">
+                                        <div class="me-2">
+                                        <i class="bi bi-arrow-up-right"></i>
+                                        </div>
+                                        <span id="SucceedsToday">+210</span>
+                                        </div> *@
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-2">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <div class="row">
+                                            <div class="col">
+                                                <div class="d-flex align-items-baseline text-success">
+                                                    <i class="bi bi-clock-history fs-3"></i>&nbsp;
+                                                    <h2 class="card-title">In Progress</h2>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-body p-0">
+                                        <div class="p-3">
+                                            <h4 class="mb-1" id="eInvoiceInprogress">3,000</h4>
+                                            @* <div class="d-flex text-success">
+                                        <div class="me-2">
+                                        <i class="bi bi-arrow-up-right"></i>
+                                        </div>
+                                        <span id="SucceedsToday">+210</span>
+                                        </div> *@
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-2">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <div class="row">
+                                            <div class="col">
+                                                <div class="d-flex align-items-baseline text-success">
+                                                    <i class="bi bi-check-circle-fill fs-3"></i>&nbsp;
+                                                    <h2 class="card-title">Approved</h2>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-body p-0">
+                                        <div class="p-3">
+                                            <h4 class="mb-1" id="eInvoiceApproved">3,000</h4>
+                                            @* <div class="d-flex text-success">
+                                        <div class="me-2">
+                                        <i class="bi bi-arrow-up-right"></i>
+                                        </div>
+                                        <span id="SucceedsToday">+210</span>
+                                        </div> *@
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-2">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <div class="row">
+                                            <div class="col">
+                                                <div class="d-flex align-items-baseline text-brand">
+                                                    <i class="bi bi-x-circle fs-3"></i>&nbsp;
+                                                    <h2 class="card-title">Rejected</h2>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-body p-0">
+                                        <div class="p-3">
+                                            <h4 class="mb-1" id="eInvoiceRejected">10</h4>
+                                            @* <div class="d-flex text-brand">
+                                        <div class="me-2">
+                                        <i class="bi bi-arrow-down-right"></i>
+                                        </div>
+                                        <span id="FailsToday">-5</span>
+                                        </div> *@
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-2">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <div class="row">
+                                            <div class="col">
+                                                <div class="d-flex align-items-baseline text-brand">
+                                                    <i class="bi bi-x-circle-fill fs-3"></i>&nbsp;
+                                                    <h2 class="card-title">Failed</h2>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-body p-0">
+                                        <div class="p-3">
+                                            <h4 class="mb-1" id="eInvoiceFailed">10</h4>
+                                            @* <div class="d-flex text-brand">
+                                        <div class="me-2">
+                                        <i class="bi bi-arrow-down-right"></i>
+                                        </div>
+                                        <span id="FailsToday">-5</span>
+                                        </div> *@
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-2">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <div class="row">
+                                            <div class="col">
+                                                <div class="d-flex align-items-baseline text-success">
+                                                    <i class="bi bi-ui-checks-grid fs-3"></i>&nbsp;
+                                                    <h2 class="card-title">Manual Recon</h2>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-body p-0">
+                                        <div class="p-3">
+                                            <h4 class="mb-1" id="eInvoiceManualRecon">3,000</h4>
+                                            @* <div class="d-flex text-success">
+                                        <div class="me-2">
+                                        <i class="bi bi-arrow-up-right"></i>
+                                        </div>
+                                        <span id="SucceedsToday">+210</span>
+                                        </div> *@
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+            <!-- E-Invoice Total Amount -->
+
+            <div class="col-md-4 col-lg-4">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="d-flex align-items-baseline">
+                                            <h2 class="card-title">Invoice Total Amount</h2>
+                                            <i class="bi bi-exclamation-circle opacity-50 ms-1" data-bs-toggle="tooltip" data-bs-html="true" aria-label="remark " data-bs-original-title="remark "></i>
+                                        </div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <div class="dropdown">
+                                            <button class="btn btn-light dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <i class="bi bi-three-dots-vertical"></i>
+                                            </button>
+                                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton1">
+                                                <li><a class="dropdown-item" href="#">Action</a></li>
+                                                <li><a class="dropdown-item" href="#">Another action</a></li>
+                                                <li><a class="dropdown-item" href="#">Something else here</a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <div>&nbsp;</div>
+
+
+                                    <div class="col-12">
+                                        <div class="card bg-primary text-white">
+                                            <div class="card-body">
+                                                <div class="row text-center">
+                                                    <div class="col-6">
+                                                        <div id="annual-limit-radial" style="min-height: 108.7px;">
+                                                        </div>
+                                                        <h6 class="mb-0 text-white">ANNUAL</h6>
+                                                        <small class="opacity-75 text-white" id="YearlyInvoiceSum">$120.00</small>
+                                                    </div>
+                                                    <div class="col-6">
+                                                        <div id="monthly-limit-radial" style="min-height: 108.7px;"></div>
+                                                        <h6 class="mb-0 text-white">MONTHLY</h6>
+                                                        <small class="opacity-75 text-white" id="MonthlyInvoiceSum"> $120.00</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                            @* <div class="card-body" style="min-height: 250px">
+                        <div id="monthly-donut" style="min-height: 481.2px;">
+                        </div>
+                        <div class="text-center mt-4">
+                        <h4>Monthly Goal</h4>
+                        <small class="text-muted">Risus scelerisque tempus enim</small>
+                        </div>
+                        </div> *@
+                        </div>
+                    </div>
+
+                    <!-- E-Invoice Status Summary -->
+                    <div class="col-12 d-flex">
+                        <div class="card overflow-hidden w-100">
+                            <div class="card-header">
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="d-flex align-items-baseline">
+                                            <h2 class="card-title">E-Invoice Status Summary</h2>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div id="chart1" class="d-flex justify-content-center" style="min-height: 162.033px;">
+                                    <div id="apexchartsmuhs88on" class="apexcharts-canvas apexchartsmuhs88on apexcharts-theme-light" style="width: 220px; height: 162.033px;">
+                                        <svg id="SvgjsSvg1025" width="220" height="162.03333333333333" xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:svgjs="http://svgjs.dev" class="apexcharts-svg" xmlns:data="ApexChartsNS" transform="translate(0, 0)" style="background: transparent;">
+                                            <foreignObject x="0" y="0" width="220" height="162.03333333333333"><div class="apexcharts-legend" xmlns="http://www.w3.org/1999/xhtml"></div></foreignObject>
+                                            <g id="SvgjsG1027" class="apexcharts-inner apexcharts-graphical" transform="translate(31.33333333333333, 0)"><defs id="SvgjsDefs1026"><clipPath id="gridRectMaskmuhs88on"><rect id="SvgjsRect1028" width="165.33333333333334" height="193.33333333333334" x="-4" y="-6" rx="0" ry="0" opacity="1" stroke-width="0" stroke="none" stroke-dasharray="0" fill="#fff"></rect></clipPath><clipPath id="forecastMaskmuhs88on"></clipPath><clipPath id="nonForecastMaskmuhs88on"></clipPath><clipPath id="gridRectMarkerMaskmuhs88on"><rect id="SvgjsRect1029" width="163.33333333333334" height="185.33333333333334" x="-2" y="-2" rx="0" ry="0" opacity="1" stroke-width="0" stroke="none" stroke-dasharray="0" fill="#fff"></rect></clipPath></defs><g id="SvgjsG1030" class="apexcharts-pie"><g id="SvgjsG1031" transform="translate(0, 0) scale(1)"><circle id="SvgjsCircle1032" r="46.620325203252044" cx="79.66666666666667" cy="79.66666666666667" fill="transparent"></circle><g id="SvgjsG1033" class="apexcharts-slices"><g id="SvgjsG1034" class="apexcharts-series apexcharts-pie-series" seriesName="series-1" rel="1" data:realIndex="0"><path id="SvgjsPath1035" d="M 79.66666666666667 7.943089430894304 A 71.72357723577237 71.72357723577237 0 0 1 121.82472760751381 137.69225954777062 L 107.06940627821731 117.38330203938426 A 46.620325203252044 46.620325203252044 0 0 0 79.66666666666667 33.04634146341463 L 79.66666666666667 7.943089430894304 z " fill="var(--lpx-primary)" fill-opacity="1" stroke-opacity="1" stroke-linecap="butt" stroke-width="2" stroke-dasharray="0" class="apexcharts-pie-area apexcharts-donut-slice-0" index="0" j="0" data:angle="144" data:startAngle="0" data:strokeWidth="2" data:value="40" data:pathOrig="M 79.66666666666667 7.943089430894304 A 71.72357723577237 71.72357723577237 0 0 1 121.82472760751381 137.69225954777062 L 107.06940627821731 117.38330203938426 A 46.620325203252044 46.620325203252044 0 0 0 79.66666666666667 33.04634146341463 L 79.66666666666667 7.943089430894304 z " stroke="var(--lpx-card-bg)"></path></g><g id="SvgjsG1036" class="apexcharts-series apexcharts-pie-series" seriesName="series-2" rel="2" data:realIndex="1"><path id="SvgjsPath1037" d="M 121.82472760751381 137.69225954777062 A 71.72357723577237 71.72357723577237 0 0 1 11.453491164586623 101.83047092988446 L 35.328102590314636 94.07313943775823 A 46.620325203252044 46.620325203252044 0 0 0 107.06940627821731 117.38330203938426 L 121.82472760751381 137.69225954777062 z " fill="var(--lpx-success)" fill-opacity="1" stroke-opacity="1" stroke-linecap="butt" stroke-width="2" stroke-dasharray="0" class="apexcharts-pie-area apexcharts-donut-slice-1" index="0" j="1" data:angle="108" data:startAngle="144" data:strokeWidth="2" data:value="30" data:pathOrig="M 121.82472760751381 137.69225954777062 A 71.72357723577237 71.72357723577237 0 0 1 11.453491164586623 101.83047092988446 L 35.328102590314636 94.07313943775823 A 46.620325203252044 46.620325203252044 0 0 0 107.06940627821731 117.38330203938426 L 121.82472760751381 137.69225954777062 z " stroke="var(--lpx-card-bg)"></path></g><g id="SvgjsG1038" class="apexcharts-series apexcharts-pie-series" seriesName="series-3" rel="3" data:realIndex="2"><path id="SvgjsPath1039" d="M 11.453491164586623 101.83047092988446 A 71.72357723577237 71.72357723577237 0 0 1 11.453491164586623 57.50286240344887 L 35.328102590314636 65.2601938955751 A 46.620325203252044 46.620325203252044 0 0 0 35.328102590314636 94.07313943775823 L 11.453491164586623 101.83047092988446 z " fill="var(--lpx-warning)" fill-opacity="1" stroke-opacity="1" stroke-linecap="butt" stroke-width="2" stroke-dasharray="0" class="apexcharts-pie-area apexcharts-donut-slice-2" index="0" j="2" data:angle="36" data:startAngle="252" data:strokeWidth="2" data:value="10" data:pathOrig="M 11.453491164586623 101.83047092988446 A 71.72357723577237 71.72357723577237 0 0 1 11.453491164586623 57.50286240344887 L 35.328102590314636 65.2601938955751 A 46.620325203252044 46.620325203252044 0 0 0 35.328102590314636 94.07313943775823 L 11.453491164586623 101.83047092988446 z " stroke="var(--lpx-card-bg)"></path></g><g id="SvgjsG1040" class="apexcharts-series apexcharts-pie-series" seriesName="series-4" rel="4" data:realIndex="3"><path id="SvgjsPath1041" d="M 11.453491164586623 57.50286240344887 A 71.72357723577237 71.72357723577237 0 0 1 79.65414854098948 7.94309052330685 L 79.6585298849765 33.046342173482785 A 46.620325203252044 46.620325203252044 0 0 0 35.328102590314636 65.2601938955751 L 11.453491164586623 57.50286240344887 z " fill="var(--lpx-brand)" fill-opacity="1" stroke-opacity="1" stroke-linecap="butt" stroke-width="2" stroke-dasharray="0" class="apexcharts-pie-area apexcharts-donut-slice-3" index="0" j="3" data:angle="72" data:startAngle="288" data:strokeWidth="2" data:value="20" data:pathOrig="M 11.453491164586623 57.50286240344887 A 71.72357723577237 71.72357723577237 0 0 1 79.65414854098948 7.94309052330685 L 79.6585298849765 33.046342173482785 A 46.620325203252044 46.620325203252044 0 0 0 35.328102590314636 65.2601938955751 L 11.453491164586623 57.50286240344887 z " stroke="var(--lpx-card-bg)"></path></g></g></g></g><line id="SvgjsLine1042" x1="0" y1="0" x2="159.33333333333334" y2="0" stroke="#b6b6b6" stroke-dasharray="0" stroke-width="1" stroke-linecap="butt" class="apexcharts-ycrosshairs"></line><line id="SvgjsLine1043" x1="0" y1="0" x2="159.33333333333334" y2="0" stroke-dasharray="0" stroke-width="0" stroke-linecap="butt" class="apexcharts-ycrosshairs-hidden"></line></g>
+                                        </svg>
+                                    </div>
+                                </div>
+
+                                <div class="mt-3">
+                                    <div class="align-items-baseline d-flex">
+                                        <span class="bg-primary me-2 p-1 rounded-circle"></span>
+                                        <span class="d-block mb-1"><span class="text-primary me-2">40%</span> Pending </span>
+                                    </div>
+                                    <div class="align-items-baseline d-flex">
+                                        <span class="bg-success me-2 p-1 rounded-circle"></span>
+                                        <span class="d-block mb-1"><span class="text-success me-2">30%</span> Approved </span>
+                                    </div>
+                                    <div class="align-items-baseline d-flex">
+                                        <span class="bg-warning me-2 p-1 rounded-circle"></span>
+                                        <span class="d-block mb-1">
+                                            <span class="text-warning me-2">10%</span> In Progress
+                                        </span>
+                                    </div>
+                                    <div class="align-items-baseline d-flex">
+                                        <span class="bg-brand me-2 p-1 rounded-circle"></span>
+                                        <span class="d-block mb-1"><span class="text-brand me-2">20%</span> Failed </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Montly E-Invoice Issued -->
+                <div class="col-md-8 col-lg-8">
                   <div class="row">
                     <div class="col-12">
                       <div class="card bg-brand-gradient text-white">
@@ -62,10 +545,10 @@
                           <div class="row">
                             <div class="col">
                               <div class="d-flex align-items-baseline">
-                                <h2 class="card-title">Montly E-Invoice Issued</h2>
+                                <h2 class="card-title">Invoice Generated Number Count</h2>
                                             <i class="bi bi-exclamation-circle opacity-50 ms-1" data-bs-toggle="tooltip" data-bs-html="true" aria-label="remark" data-bs-original-title="remark"></i>
                               </div>
-                              <small class="d-block text-muted text-truncate">Each month E-Invoice total count</small>
+                                        <small class="d-block text-muted text-truncate">Each month E-Invoice Generated count</small>
                             </div>
                           </div>
                         </div>
@@ -81,13 +564,15 @@
                   </div>
                 </div>
 
+
+            <!--
                 <div class="col-md-12 col-lg-7">
                   <div class="card">
                     <div class="card-header">
                       <div class="row">
                         <div class="col">
                           <div class="d-flex align-items-baseline">
-                            <h2 class="card-title">Success Rate</h2>
+                            <h2 class="card-title">System log Successful Rate</h2>
                                     <i class="bi bi-exclamation-circle opacity-50 ms-1" data-bs-toggle="tooltip" data-bs-html="true" aria-label="remark " data-bs-original-title="remark "></i>
                           </div>
                                 <small class="d-block text-muted text-truncate">Showing data between @DateTime.Now.AddMonths(-1).ToString("dd.MM yyyy") and @DateTime.Now.ToString("dd.MM yyyy")</small>
@@ -170,6 +655,8 @@
 
                   </div>
                 </div>
+                
+
                 <div class="col-md-12 col-lg-6">
                   <div class="card">
                     <div class="card-header">
@@ -243,69 +730,9 @@
                     </div>
                   </div>
                 </div>
-                 <div class="col-md-12 col-lg-6">
-                  <div class="row">
-                    <div class="col-12">
-                      <div class="card">
-                        <div class="card-header">
-                          <div class="row">
-                            <div class="col">
-                              <div class="d-flex align-items-baseline">
-                                <h2 class="card-title">Invoice Total Amount</h2>
-                                <i class="bi bi-exclamation-circle opacity-50 ms-1" data-bs-toggle="tooltip" data-bs-html="true" aria-label="remark " data-bs-original-title="remark "></i>
-                              </div>
-                            </div>
-                            <div class="col-auto">
-                              <div class="dropdown">
-                                <button class="btn btn-light dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-                                  <i class="bi bi-three-dots-vertical"></i>
-                                </button>
-                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton1">
-                                  <li><a class="dropdown-item" href="#">Action</a></li>
-                                  <li><a class="dropdown-item" href="#">Another action</a></li>
-                                  <li><a class="dropdown-item" href="#">Something else here</a></li>
-                                </ul>
-                              </div>
-                            </div>
-                            <div>&nbsp;</div>
-                                    
 
-                                    <div class="col-12">
-                                        <div class="card bg-primary text-white">
-                                            <div class="card-body">
-                                                <div class="row text-center">
-                                                    <div class="col-6">
-                                                        <div id="annual-limit-radial" style="min-height: 108.7px;">
-                                                        </div>
-                                                        <h6 class="mb-0 text-white">ANNUAL</h6>
-                                                        <small class="opacity-75 text-white" id="YearlyInvoiceSum">$120.00</small>
-                                                    </div>
-                                                    <div class="col-6">
-                                                        <div id="monthly-limit-radial" style="min-height: 108.7px;"></div>
-                                                        <h6 class="mb-0 text-white">MONTHLY</h6>
-                                                        <small class="opacity-75 text-white" id="MonthlyInvoiceSum"> $120.00</small>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                          </div>
-                        </div>
-                        @* <div class="card-body" style="min-height: 250px">
-                          <div id="monthly-donut" style="min-height: 481.2px;">
-                          </div>
-                          <div class="text-center mt-4">
-                            <h4>Monthly Goal</h4>
-                            <small class="text-muted">Risus scelerisque tempus enim</small>
-                          </div>
-                        </div> *@
-                      </div>
-                    </div>
-
-                    
-                  </div>
-                </div>
+                 -->
+                 
             @* <div class="col-md-12 col-lg-6">
                   <div class="card">
                     <div class="card-header">

@@ -2,13 +2,14 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Volo.Abp;
+using Volo.Abp.AspNetCore.Mvc;
 
 namespace TaskScheduler.Samples;
 
 [Area(TaskSchedulerRemoteServiceConsts.ModuleName)]
 [RemoteService(Name = TaskSchedulerRemoteServiceConsts.RemoteServiceName)]
 [Route("api/TaskScheduler/sample")]
-public class SampleController : TaskSchedulerController, ISampleAppService
+public class SampleController : AbpControllerBase, ISampleAppService
 {
     private readonly ISampleAppService _sampleAppService;
 

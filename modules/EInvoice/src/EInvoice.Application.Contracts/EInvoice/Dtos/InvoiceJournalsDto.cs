@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel.DataAnnotations;
 using Volo.Abp.Application.Dtos;
 
 namespace EInvoice.Dtos;
@@ -132,4 +133,14 @@ public class InvoiceJournalsDto : FullAuditedEntityDto<Guid>
     public string? CountryOfOrigin { get; set; }
 
     public string? OtherCharges { get; set; }
+
+    public virtual EInvoiceStatus EInvoiceStatus { get; set; }
+
+    [StringLength(EInvoiceTableConsts.MaxParameterLength)]
+    public string EInvoiceApiRequestJSON { get; set; }
+    [StringLength(EInvoiceTableConsts.MaxParameterLength)]
+    public string EInvoiceApiResponseJSON { get; set; }
+
+    [StringLength(EInvoiceTableConsts.MaxErrorMessageLength, MinimumLength = EInvoiceTableConsts.MinErrorMessageLength)]
+    public virtual string ErrorMessage { get; set; }
 }

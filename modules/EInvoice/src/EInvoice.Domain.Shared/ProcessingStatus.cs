@@ -7,24 +7,21 @@ namespace EInvoice
     public enum ProcessingStatus
     {
         [System.Runtime.Serialization.EnumMemberAttribute()]
-        Imported = 0,
+        InboundImported = 0,
 
         [System.Runtime.Serialization.EnumMemberAttribute()]
-        Ready = 1,
+        InboundSuccessful = 1,
 
         [System.Runtime.Serialization.EnumMemberAttribute()]
-        InProgress = 2,
+        InboundFailed = 2,
 
         [System.Runtime.Serialization.EnumMemberAttribute()]
-        Completed = 3,
+        OutboundSuccessful = 3,
 
         [System.Runtime.Serialization.EnumMemberAttribute()]
-        Error = 4,
+        OutboundFailed = 4,
 
         [System.Runtime.Serialization.EnumMemberAttribute()]
-        OnHold = 5,
-
-        //[System.Runtime.Serialization.EnumMemberAttribute()]
-        //OutOfPeriod = 6,
+        Error = 5,
     }
 }

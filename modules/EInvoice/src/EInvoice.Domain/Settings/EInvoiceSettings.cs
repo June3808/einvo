@@ -7,4 +7,10 @@ public static class EInvoiceSettings
     /* Add constants for setting names. Example:
      * public const string MySettingName = GroupName + ".MySettingName";
      */
+
+    public class EInvoice
+    {
+        public const string Default = GroupName + ".IRBM";
+        public const string URLAddress = Default + ".URLAddress";
+    }
 }

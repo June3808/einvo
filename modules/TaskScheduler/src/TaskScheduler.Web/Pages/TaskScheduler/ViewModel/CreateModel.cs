@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Threading.Tasks;
 using TaskScheduler;
 using TaskScheduler.TaskSchedulers;
@@ -14,23 +15,25 @@ namespace TaskSchedulers.Web.Pages.TaskScheduler.ViewModel
     public class CreateModel : TaskSchedulerPageModel
     {
         private readonly ITaskSchedulersAppService _taskSchedulerAppService;
-
         public CreateModel(ITaskSchedulersAppService taskSchedulerAppService)
         {
             this._taskSchedulerAppService = taskSchedulerAppService;
         }
 
         [BindProperty]
-        public CreateOrEditScheduleJobModalViewModel ScheduleJob { get; set; }
+        public CreateUpdateScheduleJobDto ScheduleJob { get; set; }
+
+        [BindProperty]
+        public TriggerViewModel Trigger { get; set; }
 
         [BindProperty]
         public bool TriggerNow { get; set; }
 
         public List<SelectListItem> TriggersList { get; set; } = new List<SelectListItem>
         {
-            new SelectListItem { Value = "Simple", Text = "Simple"},
-            new SelectListItem { Value = "Cron", Text = "Cron"},
-            new SelectListItem { Value = "Daily", Text = "Daily"}
+            new SelectListItem { Value = "simple", Text = "Simple"},
+            new SelectListItem { Value = "cron", Text = "Cron"},
+            new SelectListItem { Value = "daily", Text = "Daily"}
         };
 
         public async Task OnGet(Guid? id)
@@ -44,7 +47,8 @@ namespace TaskSchedulers.Web.Pages.TaskScheduler.ViewModel
 
             model.ApplyFromJob();
 
-            ScheduleJob = model;
+            ScheduleJob = model.ScheduleJob;
+            Trigger = model.Trigger;
         }
 
         public virtual async Task<IActionResult> OnPostAsync([FromForm] CreateOrEditScheduleJobModalViewModel input)

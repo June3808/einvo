@@ -89,6 +89,24 @@ $(function () {
         //   Success Rate chart
         // 8-8-8-8-8-8-8-8-8-8-8-8-
         //debugger
+        invoiceService.inboundCount({ startDate: firstDayDateString, endDate: ToDateString }).done(function (result) {
+            //debugger;
+            $("#InboundTotal").text(result.data.InboundTotal);
+            $("#InboundSuccessful").text(result.data.InboundSuccessful);
+            $("#InboundFailed").text(result.data.InboundFailed);
+        });
+
+        invoiceService.outboundCount({ startDate: firstDayDateString, endDate: ToDateString }).done(function (result) {
+            //debugger;
+            $("#OutboundTotal").text(result.data.OutboundTotal);
+            $("#OutboundSuccessful").text(result.data.OutboundSuccessful);
+            $("#OutboundFailed").text(result.data.OutboundFailed);
+        });
+
+        invoiceService.yearlyInvoiceSum().done(function (result) {
+            $("#YearlyInvoiceSum").text("$" + result);
+        });
+
         auditService.getErrorRate({ startDate: firstDayDateString, endDate: ToDateString }).done(function (result) {
             //debugger;
             $("#SucceedsTotal").text(result.data.Success);

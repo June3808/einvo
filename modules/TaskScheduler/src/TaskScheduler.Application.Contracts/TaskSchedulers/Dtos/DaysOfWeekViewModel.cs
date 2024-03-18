@@ -54,7 +54,7 @@ namespace TaskScheduler.TaskSchedulers.Dtos
             if (string.IsNullOrEmpty(list))
                 return new DaysOfWeekViewModel();
 
-            var DaysOfWeekSelected = "";// JsonConvert.DeserializeObject<List<DayOfWeek>>(list);
+            var DaysOfWeekSelected = JsonConvert.DeserializeObject<List<DayOfWeek>>(list);
             return DaysOfWeekViewModel.Create(DaysOfWeekSelected);
         }
 

@@ -166,7 +166,6 @@ namespace TaskScheduler.TaskSchedulersAppService
                 await this.BuildAndRunJob(scheduleJob, true);
         }
 
-        //[AbpAuthorize(AppPermissions.Pages_MES_ScheduleJobs_Edit, AppPermissions.Pages_ERP_ScheduleJobs_Edit)]
         private async Task UpdateJobWithTrigger(CreateUpdateScheduleJobDto input, bool mustStartNow)
         {
             var query = await this.Repository.GetQueryableAsync();
@@ -202,11 +201,12 @@ namespace TaskScheduler.TaskSchedulersAppService
             {
                 scheduleJob.StartDateTime = input.StartDateTime.HasValue ? input.StartDateTime.Value : DateTime.MinValue;
                 scheduleJob.JobStatus = input.JobStatus;
-
             }
 
             //set class name
             scheduleJob.ClassName = getAssemblyQualifiedName(scheduleJob.JobGroup);
+
+            await this.Repository.UpdateAsync(scheduleJob);
 
             //build and run the job
             if (mustStartNow)
@@ -236,6 +236,8 @@ namespace TaskScheduler.TaskSchedulersAppService
                 await this.BuildAndRunJob(scheduleJob, true);
             }
 
+            await this.CurrentUnitOfWork.SaveChangesAsync();
+
             //var Log = "Update Job:" + scheduleJob.JobName + " successfully.";
             //await _taskSchedulerDomainService.InsertJobHistory(scheduleJob, Log);
         }
@@ -246,6 +248,11 @@ namespace TaskScheduler.TaskSchedulersAppService
             if (type == null)
                 throw new AbpException("Can not find the job type name!");
             return type.AssemblyQualifiedName;
+        }
+
+        public override async Task DeleteAsync(Guid id)
+        {
+            await this.Repository.DeleteAsync(id);
         }
 
 

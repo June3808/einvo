@@ -7,6 +7,11 @@
     //After abp v7.2 use dynamicForm 'column-size' instead of the following settings
     //$('#InvoiceJournalsCollapse div').addClass('col-sm-3').parent().addClass('row');
 
+    //$('.date-picker').datetimepicker({
+    //    //locale: abp.localization.currentLanguage.name,
+    //    format: 'L'
+    //})
+
     var getFilter = function () {
         var input = {};
         $("#InvoiceJournalsFilter")
@@ -19,9 +24,16 @@
         return input;
     };
 
+    //$('.datepicker').datepicker({
+    //    format: 'dd/MM/yyyy',
+    //    endDate: '+0d',
+    //    autoclose: true,
+    //    "showTodayButton": true,
+    //});
+
     var l = abp.localization.getResource('TaskScheduler');
 
-    var service = Sys.taskSchedulers;
+    var service = taskScheduler.taskScheduler;
 
     var dataTable = $('#TaskSchedulerTable').DataTable(abp.libs.datatables.normalizeConfiguration({
         processing: true,
@@ -44,7 +56,7 @@
                                     service.start(data.record.id)
                                         .then(function () {
                                             abp.notify.info(l('SuccessfullyStartScheduleJob'));
-                                            //dataTable.ajax.reload();
+                                            dataTable.ajax.reload();
                                         });
                                 }
                             },
@@ -55,7 +67,7 @@
                                     service.stop(data.record.id)
                                         .then(function () {
                                             abp.notify.info(l('SuccessfullyStopScheduleJob'));
-                                            //dataTable.ajax.reload();
+                                            dataTable.ajax.reload();
                                         });
                                 }
                             },

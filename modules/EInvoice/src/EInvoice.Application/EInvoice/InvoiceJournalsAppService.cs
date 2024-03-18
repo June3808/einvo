@@ -27,10 +27,16 @@ using System.Text.Json.Serialization;
 using System.Net.Http.Json;
 //using Newtonsoft.Json;
 using System.Text.Json;
-using System.Text.Json.Nodes;
-using System.Linq.Dynamic.Core;
-using System.Runtime.Serialization.Json;
-using NPOI.POIFS.Storage;
+using EInvoice.EInvoice.Dtos.BC;
+using EInvoice.AuthenticationUtility;
+using EInvoice.EInvoice.Dtos.IRBM;
+using System.Linq.Expressions;
+using EInvoice.Api;
+using NPOI.SS.Formula.Functions;
+using System.Security.Policy;
+using EInvoice.EInvoice;
+using EInvoice.EInvoice.Dtos;
+using NPOI.XSSF.Streaming.Values;
 
 namespace EInvoice;
 
@@ -45,13 +51,17 @@ public class InvoiceJournalsAppService : CrudAppService<InvoiceJournals, Invoice
     protected override string DeletePolicyName { get; set; } = EInvoicePermissions.InvoiceJournals.Delete;
 
     private readonly IFileAppService _service;
+    private readonly IEInvoiceUriBuilder _uriBuilder;
+
 
     public InvoiceJournalsAppService(
         IRepository<InvoiceJournals, Guid> repository,
-        IFileAppService service
+        IFileAppService service,
+        IEInvoiceUriBuilder uriBuilder
         ) : base(repository)
     {
         _service = service;
+        _uriBuilder = uriBuilder;
     }
 
     protected override async Task<IQueryable<InvoiceJournals>> CreateFilteredQueryAsync(InvoiceJournalsGetListInput input)
@@ -136,7 +146,7 @@ public class InvoiceJournalsAppService : CrudAppService<InvoiceJournals, Invoice
                 var steam = fileInfo.GetStream(); // file steam in memory
 
                 // handle csv upload
-                if (fileInfo.FileName != null && fileInfo.FileName.ToLower().IndexOf(".csv") != -1)
+                if(fileInfo.FileName !=null && fileInfo.FileName.ToLower().IndexOf(".csv") != -1)
                 {
                     var reader = new StreamReader(steam, Encoding.UTF8);
 
@@ -209,6 +219,10 @@ public class InvoiceJournalsAppService : CrudAppService<InvoiceJournals, Invoice
                         invoice.ShippingRecipientIdentification = "";
                         invoice.ShippingRecipientName = "";
                         invoice.ShippingRecipientTIN = "";
+                        invoice.EInvoiceApiRequestJSON = "";
+                        invoice.EInvoiceApiResponseJSON = "";
+                        invoice.ErrorMessage = "";
+                        invoice.OrderNo = "";
 
                         await Repository.InsertAsync(invoice);
                         if (CurrentUnitOfWork != null)
@@ -217,14 +231,14 @@ public class InvoiceJournalsAppService : CrudAppService<InvoiceJournals, Invoice
                 }
 
                 //handle excel upload
-                if (fileInfo.FileName != null && fileInfo.FileName.ToLower().IndexOf(".xlsx") != -1)
+                if(fileInfo.FileName !=null && fileInfo.FileName.ToLower().IndexOf(".xlsx") != -1)
                 {
 
                     MemoryStream objMemoryStream = new MemoryStream();
                     fileInfo.GetStream().CopyTo(objMemoryStream);
 
 
-                    var worksheet = CustomDtoExcelImporter.ImportEntityFromStream(fileInfo.FileName, objMemoryStream);
+                    var worksheet = CustomDtoExcelImporter.ImportEntityFromStream(fileInfo.FileName,objMemoryStream);
 
                     var rowEnumerator = worksheet.GetRowEnumerator();
                     rowEnumerator.Reset();
@@ -323,10 +337,10 @@ public class InvoiceJournalsAppService : CrudAppService<InvoiceJournals, Invoice
         }
         catch (Exception ex)
         {
-            ex = ex.GetBaseException();
+            ex=ex.GetBaseException();
             throw new UserFriendlyException(ex.Message);
         }
-
+        
 
         var fileReturn = await _service.CreateManyWithStreamAsync(input);
 
@@ -341,13 +355,13 @@ public class InvoiceJournalsAppService : CrudAppService<InvoiceJournals, Invoice
     }
 
     private DateTime convertMYdatetime(string strDatetime)
-    {
-        if (strDatetime.IsNullOrEmpty())
+    {  
+        if(strDatetime.IsNullOrEmpty())
             return DateTime.MinValue;
         DateTime dateTime;
         string[] enUKformats = { "dd-MM-yyyy" }; // malaysia,UK,SG
         bool success = DateTime.TryParseExact(strDatetime, enUKformats, new CultureInfo("en-UK"), DateTimeStyles.None, out dateTime);
-        if (!success)
+        if(!success)
         {
             string format_uk2 = "d/M/yyyy"; // malaysia,UK,SG
             success = DateTime.TryParseExact(strDatetime, format_uk2, null, DateTimeStyles.None, out dateTime);
@@ -373,14 +387,519 @@ public class InvoiceJournalsAppService : CrudAppService<InvoiceJournals, Invoice
         return date;
     }
 
-    public void test(dynamic obj)
+    public async Task<List<InvoiceJournalsDto>> PostSalesInvoice()
     {
-        Logger.LogInformation("api works!!");
-        string json = JsonSerializer.Serialize(obj);
+        var list = await this.Repository.GetListAsync();
+        var dtos = new List<InvoiceJournalsDto>();
 
-        Logger.LogInformation(json);
+        this.ObjectMapper.Map<List<InvoiceJournals>,List<InvoiceJournalsDto>>(list, dtos);
+
+        return dtos;
     }
 
+    public async Task syncSalesInvoice(BCSalesInvoiceSyncDto obj)
+    {
+        //string json = JsonSerializer.Serialize(obj);
+
+        //Logger.LogInformation(json);
+
+        var salesInvoice = obj.salesInvoice;
+        var companyInfo = obj.companyInfo;
+
+        var invoice = this.Repository.FindAsync(s => s.EInvoiceType == "SalesInvoice" && s.OrderNo == salesInvoice.No).Result;
+        var isNewRec = false;
+
+        if (invoice == null)
+        {
+            invoice = new InvoiceJournals();
+            invoice.EInvoiceType = "SalesInvoice";
+            invoice.OrderNo = salesInvoice.No;
+            invoice.EInvoiceCode = "";
+            invoice.EInvoiceVersion = "";
+            isNewRec = true;
+        }
+
+        //einvoice
+        invoice.EInvoiceOriginalReferNo = salesInvoice.Your_Reference;
+        invoice.EInvoiceDateTime = DateTime.Now;
+        invoice.EInvoiceValidationDateTime = DateTime.Now;
+
+        //supplier
+        invoice.SupplierName = companyInfo.Name;
+        invoice.SupplierAddress = companyInfo.Address;
+        invoice.SupplierTIN = companyInfo.TIN;
+        invoice.SupplierEmail = companyInfo.Email;
+        invoice.SupplierContactNo = companyInfo.ContactNo;
+        invoice.SupplierMSICCode = companyInfo.MSICCode;
+        invoice.SupplierSSTRegistrationNo = companyInfo.VATRegNo;
+        invoice.SupplierIdentificationNo = "";
+        invoice.SupplierTourismTaxRegistrationNo = "";
+        invoice.SupplierBizActivityDesc = "";
+
+        //buyer
+        invoice.BuyerName = salesInvoice.Sell_to_Customer_Name;
+        invoice.BuyerTIN = "";
+        invoice.BuyerIdentificationNo = "";
+        invoice.BuyerEmail = "";
+        invoice.BuyerAddress = salesInvoice.Sell_to_Address + ' ' + salesInvoice.Sell_to_Address_2;
+        invoice.BuyerContactNo = "";
+
+        invoice.BillingPeriod = "";
+        invoice.BuyerSSTRegistrationNo = "";
+
+
+        invoice.IssuerDigitalSignature = "";
+        invoice.CurrencyCode = "";
+        invoice.CurrencyExchangeRate = 0m;
+        invoice.FrequencyOfBilling = "";
+        invoice.IRBMUniqueIdentifierNo = "";
+        invoice.Classification = "";
+        invoice.ProductServiceDesc = "";
+        invoice.UnitPrice = 0m;
+        invoice.TaxType = "";
+        invoice.TaxRate = 0m;
+        invoice.TaxAmount = 0m;
+        invoice.TaxExemptionDetail = "";
+        invoice.TaxExemptedAmount = 0m;
+        invoice.SubTotal = 0m;
+        invoice.TotalExcludingTax = 0m;
+        invoice.TotalIncludingTax = 0m;
+        invoice.Quantity = 0m;
+        invoice.Measurement = "";
+        invoice.DiscountRate = 0m;
+        invoice.DiscountAmount = 0m;
+        invoice.PaymentMode = "";
+        invoice.SupplierBankAccountNo = "";
+        invoice.PaymentTerms = "";
+        invoice.PaymentAmount = 0m;
+        invoice.PaymentDate = null;
+        invoice.PaymentReferNo = "";
+        invoice.ShippingRecipientName = "";
+        invoice.ShippingRecipientAddress = "";
+        invoice.ShippingRecipientTIN = "";
+        invoice.ShippingRecipientIdentification = "";
+        invoice.CustomsForm1ReferenceNumber = "";
+
+        invoice.Incoterms = "";
+        invoice.ProductTariffCode = "";
+        invoice.FTAInformation = "";
+        invoice.AuthorisationNo = "";
+        invoice.CustomsForm2ReferenceNumber = "";
+        invoice.CountryOfOrigin = "";
+        invoice.OtherCharges = "";
+
+
+        if (isNewRec)
+            await this.Repository.InsertAsync(invoice);
+        else
+            await this.Repository.UpdateAsync(invoice);
+
+
+    }
+
+    public async Task syncCreditMemo(BCSalesInvoiceSyncDto obj)
+    {
+        //string json = JsonSerializer.Serialize(obj);
+
+        //Logger.LogInformation(json);
+
+        var salesInvoice = obj.salesInvoice;
+        var companyInfo = obj.companyInfo;
+
+        var invoice = this.Repository.FindAsync(s => s.EInvoiceType == "CreditMemo" && s.OrderNo == salesInvoice.No).Result;
+        var isNewRec = false;
+
+        if (invoice == null)
+        {
+            invoice = new InvoiceJournals();
+            invoice.EInvoiceType = "SalesInvoice";
+            invoice.OrderNo = salesInvoice.No;
+            invoice.EInvoiceCode = "";
+            invoice.EInvoiceVersion = "";
+            isNewRec = true;
+        }
+
+        //einvoice
+        invoice.EInvoiceOriginalReferNo = salesInvoice.Your_Reference;
+        invoice.EInvoiceDateTime = DateTime.Now;
+        invoice.EInvoiceValidationDateTime = DateTime.Now;
+
+        //supplier
+        invoice.SupplierName = companyInfo.Name;
+        invoice.SupplierAddress = companyInfo.Address;
+        invoice.SupplierTIN = companyInfo.TIN;
+        invoice.SupplierEmail = companyInfo.Email;
+        invoice.SupplierContactNo = companyInfo.ContactNo;
+        invoice.SupplierMSICCode = companyInfo.MSICCode;
+        invoice.SupplierSSTRegistrationNo = companyInfo.VATRegNo;
+        invoice.SupplierIdentificationNo = "";
+        invoice.SupplierTourismTaxRegistrationNo = "";
+        invoice.SupplierBizActivityDesc = "";
+
+        //buyer
+        invoice.BuyerName = salesInvoice.Sell_to_Customer_Name;
+        invoice.BuyerTIN = "";
+        invoice.BuyerIdentificationNo = "";
+        invoice.BuyerEmail = "";
+        invoice.BuyerAddress = salesInvoice.Sell_to_Address + ' ' + salesInvoice.Sell_to_Address_2;
+        invoice.BuyerContactNo = "";
+
+        invoice.BillingPeriod = "";
+        invoice.BuyerSSTRegistrationNo = "";
+
+
+        invoice.IssuerDigitalSignature = "";
+        invoice.CurrencyCode = "";
+        invoice.CurrencyExchangeRate = 0m;
+        invoice.FrequencyOfBilling = "";
+        invoice.IRBMUniqueIdentifierNo = "";
+        invoice.Classification = "";
+        invoice.ProductServiceDesc = "";
+        invoice.UnitPrice = 0m;
+        invoice.TaxType = "";
+        invoice.TaxRate = 0m;
+        invoice.TaxAmount = 0m;
+        invoice.TaxExemptionDetail = "";
+        invoice.TaxExemptedAmount = 0m;
+        invoice.SubTotal = 0m;
+        invoice.TotalExcludingTax = 0m;
+        invoice.TotalIncludingTax = 0m;
+        invoice.Quantity = 0m;
+        invoice.Measurement = "";
+        invoice.DiscountRate = 0m;
+        invoice.DiscountAmount = 0m;
+        invoice.PaymentMode = "";
+        invoice.SupplierBankAccountNo = "";
+        invoice.PaymentTerms = "";
+        invoice.PaymentAmount = 0m;
+        invoice.PaymentDate = null;
+        invoice.PaymentReferNo = "";
+        invoice.ShippingRecipientName = "";
+        invoice.ShippingRecipientAddress = "";
+        invoice.ShippingRecipientTIN = "";
+        invoice.ShippingRecipientIdentification = "";
+        invoice.CustomsForm1ReferenceNumber = "";
+
+        invoice.Incoterms = "";
+        invoice.ProductTariffCode = "";
+        invoice.FTAInformation = "";
+        invoice.AuthorisationNo = "";
+        invoice.CustomsForm2ReferenceNumber = "";
+        invoice.CountryOfOrigin = "";
+        invoice.OtherCharges = "";
+
+
+        if (isNewRec)
+            await this.Repository.InsertAsync(invoice);
+        else
+            await this.Repository.UpdateAsync(invoice);
+
+
+    }
+
+    public async Task syncSalesReturn(BCSalesInvoiceSyncDto obj)
+    {
+        //string json = JsonSerializer.Serialize(obj);
+
+        //Logger.LogInformation(json);
+
+        var salesInvoice = obj.salesInvoice;
+        var companyInfo = obj.companyInfo;
+
+        var invoice = this.Repository.FindAsync(s => s.EInvoiceType == "SalesReturn" && s.OrderNo == salesInvoice.No).Result;
+        var isNewRec = false;
+
+        if (invoice == null)
+        {
+            invoice = new InvoiceJournals();
+            invoice.EInvoiceType = "SalesInvoice";
+            invoice.OrderNo = salesInvoice.No;
+            invoice.EInvoiceCode = "";
+            invoice.EInvoiceVersion = "";
+            isNewRec = true;
+        }
+
+        //einvoice
+        invoice.EInvoiceOriginalReferNo = salesInvoice.Your_Reference;
+        invoice.EInvoiceDateTime = DateTime.Now;
+        invoice.EInvoiceValidationDateTime = DateTime.Now;
+
+        //supplier
+        invoice.SupplierName = companyInfo.Name;
+        invoice.SupplierAddress = companyInfo.Address;
+        invoice.SupplierTIN = companyInfo.TIN;
+        invoice.SupplierEmail = companyInfo.Email;
+        invoice.SupplierContactNo = companyInfo.ContactNo;
+        invoice.SupplierMSICCode = companyInfo.MSICCode;
+        invoice.SupplierSSTRegistrationNo = companyInfo.VATRegNo;
+        invoice.SupplierIdentificationNo = "";
+        invoice.SupplierTourismTaxRegistrationNo = "";
+        invoice.SupplierBizActivityDesc = "";
+
+        //buyer
+        invoice.BuyerName = salesInvoice.Sell_to_Customer_Name;
+        invoice.BuyerTIN = "";
+        invoice.BuyerIdentificationNo = "";
+        invoice.BuyerEmail = "";
+        invoice.BuyerAddress = salesInvoice.Sell_to_Address + ' ' + salesInvoice.Sell_to_Address_2;
+        invoice.BuyerContactNo = "";
+
+        invoice.BillingPeriod = "";
+        invoice.BuyerSSTRegistrationNo = "";
+
+
+        invoice.IssuerDigitalSignature = "";
+        invoice.CurrencyCode = "";
+        invoice.CurrencyExchangeRate = 0m;
+        invoice.FrequencyOfBilling = "";
+        invoice.IRBMUniqueIdentifierNo = "";
+        invoice.Classification = "";
+        invoice.ProductServiceDesc = "";
+        invoice.UnitPrice = 0m;
+        invoice.TaxType = "";
+        invoice.TaxRate = 0m;
+        invoice.TaxAmount = 0m;
+        invoice.TaxExemptionDetail = "";
+        invoice.TaxExemptedAmount = 0m;
+        invoice.SubTotal = 0m;
+        invoice.TotalExcludingTax = 0m;
+        invoice.TotalIncludingTax = 0m;
+        invoice.Quantity = 0m;
+        invoice.Measurement = "";
+        invoice.DiscountRate = 0m;
+        invoice.DiscountAmount = 0m;
+        invoice.PaymentMode = "";
+        invoice.SupplierBankAccountNo = "";
+        invoice.PaymentTerms = "";
+        invoice.PaymentAmount = 0m;
+        invoice.PaymentDate = null;
+        invoice.PaymentReferNo = "";
+        invoice.ShippingRecipientName = "";
+        invoice.ShippingRecipientAddress = "";
+        invoice.ShippingRecipientTIN = "";
+        invoice.ShippingRecipientIdentification = "";
+        invoice.CustomsForm1ReferenceNumber = "";
+
+        invoice.Incoterms = "";
+        invoice.ProductTariffCode = "";
+        invoice.FTAInformation = "";
+        invoice.AuthorisationNo = "";
+        invoice.CustomsForm2ReferenceNumber = "";
+        invoice.CountryOfOrigin = "";
+        invoice.OtherCharges = "";
+
+
+        if (isNewRec)
+            await this.Repository.InsertAsync(invoice);
+        else
+            await this.Repository.UpdateAsync(invoice);
+
+
+    }
+
+    /// <summary>
+    /// Cancel document request to IRBM
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    /// <exception cref="UserFriendlyException"></exception>
+    /// refer https://sdk.myinvois.hasil.gov.my/einvoicingapi/03-cancel-document/
+    public async Task CancelDocument(SubmissionDto dto)
+    {
+        //var invoice = await this.Repository.FindAsync(s => s.Id == dto.Id);
+
+        //if (invoice == null)
+        //    throw new UserFriendlyException("Document not exist!");
+
+        //dto.Status = DocStatus.Cancelled.ToString().ToLower();
+
+        //var postData = GetValues(dto).ToList();
+
+        var baseUri = await _uriBuilder.BaseUri();
+        var cancelUri = await _uriBuilder.CancelOrRejectDocUri();
+        var authenticationHeader = OAuthHelper.GetAuthenticationHeader();
+        using (var apiClient = new ApiClient(baseUri, authenticationHeader))
+        {
+            //var Result = apiClient.Post<ResponseDto>(cancelUri, postData);
+        }
+    }
+
+    /// <summary>
+    /// Reject Document request to IRBM
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    /// <exception cref="UserFriendlyException"></exception>
+    public async Task RejectDocument(SubmissionDto dto)
+    {
+        var invoice = await this.Repository.FindAsync(s => s.Id == dto.Id);
+
+        if (invoice == null)
+            throw new UserFriendlyException("Document not exist!");
+
+        dto.Status = DocStatus.Rejected.ToString();
+        var postData = GetValues(dto).ToList();
+
+        var baseUri = await _uriBuilder.BaseUri();
+        var rejectUri = await _uriBuilder.CancelOrRejectDocUri();
+
+        var response = OAuthHelper.GetAuthenticationHeader();
+        var authenticationHeader = OAuthHelper.GetAuthenticationHeader();
+        using (var apiClient = new ApiClient(baseUri, authenticationHeader))
+        {
+            var Result = apiClient.Post<ResponseDto>(rejectUri, postData);
+        }
+    }
+
+    /// <summary>
+    /// Submit Document to IRBM
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    /// <exception cref="UserFriendlyException"></exception>
+    public async Task SubmitDocument(Guid id)
+    {
+        var invoice = await this.Repository.FindAsync(s => s.Id == id);
+
+        if (invoice == null)
+            throw new UserFriendlyException("Document not exist!");
+
+        var document = new SubmissionDto();
+
+        document.Uuid= invoice.Id.ToString();
+
+        var postData = GetValues(document).ToList();
+
+        var baseUri = await _uriBuilder.BaseUri();
+        var submitUri = await _uriBuilder.GetSubmissionUri();
+        var authenticationHeader = OAuthHelper.GetAuthenticationHeader();
+        using (var apiClient = new ApiClient(baseUri, authenticationHeader))
+        {
+            var Result = apiClient.Post<ResponseDto>(submitUri, postData);
+        }
+
+    }
+
+    /// <summary>
+    /// Get Paged Result of Recent Submitted Document
+    /// </summary>
+    /// <param name="input"></param>
+    /// <returns></returns>
+    /// return https://sdk.myinvois.hasil.gov.my/einvoicingapi/05-get-recent-documents/
+    public async Task<PagedResultDto<GetDocumentViewDto>> GetRecentDocuments(GetRecentDocumentInput input)
+    {
+        var postData = GetValues(input).ToList();
+
+        var Result = new List<GetDocumentViewDto>();
+
+        var baseUri = await _uriBuilder.BaseUri();
+        var requestUri = await _uriBuilder.GetRecentDocUri();
+        var authenticationHeader = OAuthHelper.GetAuthenticationHeader();
+        using (var apiClient = new ApiClient(baseUri, authenticationHeader))
+        {
+            Result = apiClient.Post<List<GetDocumentViewDto>>(requestUri, postData);
+        }
+
+        var totalCount = Result.Count();
+        return new PagedResultDto<GetDocumentViewDto>(
+            totalCount,
+            Result
+        );
+    }
+
+    /// <summary>
+    /// Get Submitted Document details from IRBM
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    /// <exception cref="UserFriendlyException"></exception>
+    /// refer https://sdk.myinvois.hasil.gov.my/einvoicingapi/06-get-submission/#document-summary
+    public async Task GetSubmission(Guid id)
+    {
+        var invoice = await this.Repository.FindAsync(s => s.Id == id);
+
+        if (invoice == null)
+            throw new UserFriendlyException("Document not exist!");
+
+        var document = new SubmissionDto();
+
+        document.Uuid = invoice.Id.ToString();
+
+        var postData = GetValues(document).ToList();
+
+        var baseUri = await _uriBuilder.BaseUri();
+        var requestUri = await _uriBuilder.GetSubmissionUri();
+        var authenticationHeader = OAuthHelper.GetAuthenticationHeader();
+        using (var apiClient = new ApiClient(baseUri, authenticationHeader))
+        {
+            var Result = apiClient.Post<SubmissionViewDto>(requestUri, postData);
+        }
+
+    }
+
+    /// <summary>
+    /// Get Full Document Details of document submitted
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    /// <exception cref="UserFriendlyException"></exception>
+    /// refer https://sdk.myinvois.hasil.gov.my/einvoicingapi/08-get-document-details/
+    public async Task GetDocumentDetails(Guid id)
+    {
+        var invoice = await this.Repository.FindAsync(s => s.Id == id);
+
+        if (invoice == null)
+            throw new UserFriendlyException("Document not exist!");
+
+        var document = new SubmissionDto();
+
+        document.Uuid = invoice.Id.ToString();
+
+        var postData = GetValues(document).ToList();
+
+        var baseUri = await _uriBuilder.BaseUri();
+        var requestUri = await _uriBuilder.GetDocDetailsUri();
+        var authenticationHeader = OAuthHelper.GetAuthenticationHeader();
+        using (var apiClient = new ApiClient(baseUri, authenticationHeader))
+        {
+            var Result = apiClient.Post<ResponseDto>(requestUri, postData);
+        }
+    }
+
+    /// <summary>
+    /// Search Documents Submitted to IRBM
+    /// </summary>
+    /// <param name="input"></param>
+    /// <returns></returns>
+    public async Task<PagedResultDto<SeachDocumentViewDto>> SearchDocuments(SearchDocumentInput input)
+    {
+        var postData = GetValues(input).ToList();
+
+        var Result = new List<SeachDocumentViewDto>();
+
+        var baseUri = await _uriBuilder.BaseUri();
+        var requestUri = await _uriBuilder.SearchDocUri();
+        var authenticationHeader = OAuthHelper.GetAuthenticationHeader();
+        using (var apiClient = new ApiClient(baseUri, authenticationHeader))
+        {
+            Result = apiClient.Get<List<SeachDocumentViewDto>>(requestUri);
+        }
+
+        var totalCount = Result.Count();
+        return new PagedResultDto<SeachDocumentViewDto>(
+            totalCount,
+            Result
+        );
+    }
+
+    public IDictionary<string, string> GetValues(object obj)
+    {
+        return obj
+                .GetType()
+                .GetProperties()
+                .ToDictionary(p => p.Name, p => p.GetValue(obj).ToString());
+    }
+	
     public async Task<List<int>> MonthlyInvoiceCount()
     {
        var query = await Repository.GetQueryableAsync();
@@ -432,4 +951,69 @@ public class InvoiceJournalsAppService : CrudAppService<InvoiceJournals, Invoice
              .GetValueOrDefault();
         return result;
     }
+
+    public virtual async Task<GetDashboardOutputDto> InboundCount(GetDashboardOutputFilter filter)
+    {
+        var query = await Repository.GetQueryableAsync();
+        var total = query
+             .Where(x => x.ProcessingStatus == ProcessingStatus.InboundFailed || x.ProcessingStatus == ProcessingStatus.InboundSuccessful || x.ProcessingStatus == ProcessingStatus.InboundImported)
+             .Count();
+        var successfulCount = query
+             .Where(x => x.ProcessingStatus == ProcessingStatus.InboundSuccessful)
+             .Count();
+        var failedCount = query
+             .Where(x => x.ProcessingStatus == ProcessingStatus.InboundFailed)
+             .Count();
+        return new GetDashboardOutputDto
+        {
+            Data = new Dictionary<string, int>
+                {
+                    {
+                        "InboundTotal",
+                        total
+                    },
+                    {
+                        "InboundSuccessful",
+                        failedCount
+                    },
+                    {
+                        "InboundFailed",
+                        successfulCount
+                    }
+                }
+        };
+    }
+
+    public virtual async Task<GetDashboardOutputDto> OutboundCount(GetDashboardOutputFilter filter)
+    {
+        var query = await Repository.GetQueryableAsync();
+        var total = query
+             .Where(x => x.ProcessingStatus == ProcessingStatus.OutboundFailed || x.ProcessingStatus == ProcessingStatus.OutboundSuccessful)
+             .Count();
+        var successfulCount = query
+             .Where(x => x.ProcessingStatus == ProcessingStatus.OutboundSuccessful)
+             .Count();
+        var failedCount = query
+             .Where(x => x.ProcessingStatus == ProcessingStatus.OutboundFailed)
+             .Count();
+        return new GetDashboardOutputDto
+        {
+            Data = new Dictionary<string, int>
+                {
+                    {
+                        "OutboundTotal",
+                        total
+                    },
+                    {
+                        "OutboundSuccessful",
+                        failedCount
+                    },
+                    {
+                        "OutboundFailed",
+                        successfulCount
+                    }
+                }
+        };
+    }
+
 }

@@ -1,8 +1,21 @@
 ﻿$(function () {
-    var service = Sys.taskSchedulers;
+    var service = taskScheduler.taskScheduler;
+
+    $.validator.setDefaults({
+        errorClass: 'errorField',
+        errorElement: 'div',
+        errorPlacement: function (error, element) {
+            error.addClass("ui red pointing above ui label error").appendTo(element.closest('div.field'));
+        },
+        highlight: function (element, errorClass, validClass) {
+            $(element).closest("div.field").addClass("error").removeClass("success");
+        },
+        unhighlight: function (element, errorClass, validClass) {
+            $(element).closest(".error").removeClass("error").addClass("success");
+        }
+    });
 
     function misfireInstrForDropdown(triggerType) {
-
         const map = $misfireInstructionsMap[triggerType.toLowerCase()];
         const keys = Object.keys(map);
 
@@ -10,7 +23,6 @@
         for (let i = 0; i < keys.length; i++) { // prepare suitable object for dropdown
             result.push({ name: map[keys[i]], value: keys[i] });
         }
-
         return result;
     }
 
@@ -52,6 +64,13 @@
 
         $('#specificTriggerHeader').text(checkedInput.closest('.radio').find('label').text() + ' Trigger Properties');
 
+
+        rebuildMisfireInstructionDropdown(checkedInput);
+        
+        
+    }
+
+    function rebuildMisfireInstructionDropdown(checkedInput) {
         let misfireOpt = misfireInstrForDropdown(checkedInput.val());
         console.log(misfireOpt);
 
@@ -63,98 +82,97 @@
                 .attr("value", value.value).text(value.name));
         });
 
-        //$('#misfireInstructions').dropdown('change values', misfireOpt);
-        //$('#misfireInstructions').dropdown('set selected', '0'); // reset misfire instruction to default value
+        $el.on('change', function () {
+            $("#ScheduleJob_ScheduleJob_MisfireInstruction").val($(this).val());
+        });
+
+        $el.val('0'); // reset misfire instruction to default value
     }
 
-    //$('#misfireInstructions').dropdown('setting', 'onChange', function (value) {
-    //    $('#selectedMisfireInstruction').val(value); // value is mirrored to hidden input because dynamically changed dropdown's value is not propagated properly during form submit
-    //});
+    triggerTypeChanged();
 
+    $('#misfireInstructions').val(MisfireInstruction);
 
-    //$('#misfireInstructions').dropdown('set selected', MisfireInstruction); // because misfire dropdown values were changed in triggerTypeChanged
-    //$('#triggerPriority').dropdown('set selected', $("#triggerPriority").val()); // in case priority is out of range [1-10]
+    $('form').on("submit",function (event) {
 
+        var _form = $('#form');
+        if (!_form.valid()) {
 
-    //$('.submit-buttons .btn-submit').click(function (event) {
- 
-
-    //    var _form = $('#form');
-    //    if (!_form.valid()) {
-    //        event.preventDefault();
-    //        return;
-    //    }
-
-
-    //    //var formData = new FormData(_form[0]);
-    //    //formData.append("mustStartNow", true);
-
-    //    //console.log(formData);
-    //    //$.ajax({
-    //    //    type: 'POST', enctype: 'multipart/form-data', url: '/TaskScheduler/Create',
-    //    //    data: formData, processData: false, contentType: false, dataType: "json", cache: false,
-    //    //    success: function (data) {
-    //    //        window.location = '/TaskScheduler/Index';
-    //    //    },
-    //    //    error: function (e) {
-    //    //        console.log(e);
-    //    //        //abp.message.error(e);
-    //    //        //$('#dimmer').dimmer('hide');
-    //    //        //prependErrorMessage(e, $('#trigger-properties'));
-    //    //    }
-    //    //});
-    //});
-
-    $.validator.addMethod('greaterDateThan', function (datefrom, element, dateto) {
-
-        var e1 = $("#EndDateTime").val();
-        var e2 = $("#StartDateTime").val();
-
-        if (e1 == "" && e2 == "")
-            return true;
-
-        if (e1 == "" && e2 != "")
-            return true;
-
-        console.log({ e1: e1, e2: e2, d1: moment(e1, dateFmt), d2: moment(e2, dateFmt) });
-
-        if (!/Invalid|NaN/.test(moment(e1, dateFmt))) {
-            return moment(e1, dateFmt).isAfter(moment(e2, dateFmt));
+            event.preventDefault();
+            return;
         }
 
-        return isNaN(e1) && isNaN($(e2).val())
-            || (Number(e1) > Number($(e2).val()));
-        return false;
-
-    }, 'End Date cannot be more than Start Date');
-
-    $.validator.addMethod('notEqualSimple', function (e1, element, param) {
-
-        var e2 = $("#simple_IntervalMinutes").val();
-
-        if (isNaN(e1) && isNaN(e2))
-            return false;
-
-        var num1 = Number(e1);
-        var num2 = Number(e2);
 
 
-        return num1 != num2;
+        //var formData = new FormData(_form[0]);
+        //formData.append("mustStartNow", true);
+
+        //console.log(formData);
+        //$.ajax({
+        //    type: 'POST', enctype: 'multipart/form-data', url: '/TaskScheduler/Create',
+        //    data: formData, processData: false, contentType: false, dataType: "json", cache: false,
+        //    success: function (data) {
+        //        window.location = '/TaskScheduler/Index';
+        //    },
+        //    error: function (e) {
+        //        console.log(e);
+        //        //abp.message.error(e);
+        //        $('#dimmer').dimmer('hide');
+        //        prependErrorMessage(e, $('#trigger-properties'));
+        //    }
+        //});
+    });
+
+
+    $.validator.addMethod('notequalsimple', function (e1, element, param) {
+
+        let triggerType = $('input[name="ScheduleJob.TriggerType"]:checked').val();
+        let e2 = $("#Trigger_Simple_IntervalMinutes").val();
+        console.log(triggerType);
+
+        if (triggerType == "simple") {
+            if (isNaN(e1) && isNaN(e2))
+                return false;
+
+            var num1 = Number(e1);
+            var num2 = Number(e2);
+
+            //console.log(num1 == 0 && num2 == 0);
+            return (num1 != 0 || num2 != 0);
+        }
+        return true;
 
     }, 'Interval cannot be 0');
 
-    $.validator.addMethod('notEqualDaily', function (e1, element, param) {
+    $.validator.addMethod('croncronexpression', function (e1, element, param) {
 
-        var e2 = $("#daily_IntervalMinutes").val();
+        let triggerType = $('input[name="ScheduleJob.TriggerType"]:checked').val();
+        let e2 = $("#Trigger_Cron_CronExpression").val();
 
-        if (isNaN(e1) && isNaN(e2))
-            return false;
+        if (triggerType == "cron")
+            return e2 != "";
+        else return true;
 
-        var num1 = Number(e1);
-        var num2 = Number(e2);
+    }, 'Cron expression cannot be empty');
 
 
-        return num1 != num2;
+    $.validator.addMethod('notequaldaily', function (e1, element, param) {
+
+        let triggerType = $('input[name="ScheduleJob.TriggerType"]:checked').val();
+        let e2 = $("#Trigger_Daily_IntervalMinutes").val();
+
+        if (triggerType == "daily") {
+            if (isNaN(e1) && isNaN(e2))
+                return false;
+
+            var num1 = Number(e1);
+            var num2 = Number(e2);
+
+            //console.log(e1 + "+" + e2 );
+            //console.log(num1 != 0 || num2 != 0);
+            return (num1 != 0 || num2 != 0);
+        }
+        return true;
 
     }, 'Interval cannot be 0');
 
@@ -181,6 +199,6 @@
     // Add event handler to button
     $('#cronGenerator').click(function () {
 
-        $('#ScheduleJob_Trigger_Cron_CronExpression').val(c.cron("value"));
+        $('#Trigger_Cron_CronExpression').val(c.cron("value"));
     })
 });
